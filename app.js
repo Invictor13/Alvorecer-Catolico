@@ -46,7 +46,7 @@ async function enterPortal() {
 
   // Animate Splash Out and Canvas Expand
   if (splashCard) {
-    splashCard.classList.add('scale-105');
+    splashCard.classList.add('exit-scale');
   }
   splash.classList.add('opacity-0', 'pointer-events-none');
 
