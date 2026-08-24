@@ -25,8 +25,60 @@ async function init() {
 
   renderSidebarLevel1();
   loadDailyLiturgy();
-  initThreeAmbient();
+
+  // Initialize canvas for both splash (if exists) and ambient
+  if (document.getElementById('splash-canvas')) {
+    initThreeAmbient('splash-canvas', true);
+  }
+  initThreeAmbient('ambient-canvas', false);
+
   lucide.createIcons();
+
+  runTypewriter();
+}
+
+function runTypewriter() {
+  const badge = document.getElementById('splash-badge');
+  const cross = document.getElementById('splash-cross');
+  const textEl = document.getElementById('typewriter-text');
+  const cursor = document.getElementById('typewriter-cursor');
+  const verseRef = document.getElementById('verse-ref');
+  const revealGroup = document.getElementById('splash-reveal-group');
+
+  if (!textEl) return;
+
+  const text = "A luz resplandece nas trevas, e as trevas não a derrotaram.";
+  let i = 0;
+
+  // Immediate fade in for badge and cross
+  setTimeout(() => {
+    if (badge) badge.classList.remove('opacity-0');
+    if (cross) cross.classList.remove('opacity-0');
+  }, 100);
+
+  // Typewriter sequence
+  setTimeout(() => {
+    const typeInterval = setInterval(() => {
+      textEl.textContent += text.charAt(i);
+      i++;
+      if (i >= text.length) {
+        clearInterval(typeInterval);
+
+        // After typing, show reference and then reveal the rest
+        setTimeout(() => {
+          if (verseRef) verseRef.classList.remove('opacity-0');
+        }, 500);
+
+        setTimeout(() => {
+          if (cursor) cursor.style.display = 'none';
+          if (revealGroup) {
+            revealGroup.classList.remove('hidden');
+            revealGroup.classList.add('flex');
+          }
+        }, 1500);
+      }
+    }, 60); // Speed of typing
+  }, 1000); // Initial delay before typing starts
 }
 
 async function enterPortal() {
