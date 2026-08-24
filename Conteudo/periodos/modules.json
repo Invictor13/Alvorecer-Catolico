@@ -1,7 +1,7 @@
 {
   "era1": {
-    "category": "historia",
-    "categoryName": "História da Igreja",
+    "category": "eras_historicas",
+    "categoryName": "Eras Históricas",
     "period": "Séc. I - II d.C.",
     "title": "Era Apostólica e Subapostólica",
     "description": "Período que abrange a pregação direta de Cristo, a efusão do Espírito Santo e a expansão.",
@@ -37,11 +37,13 @@
         "title": "Jerusalém"
       }
     ],
-    "color": 2450411
+    "color": 2450411,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/The_delivery_of_the_keys_to_Saint_Peter_by_Pietro_Perugino.jpg/800px-The_delivery_of_the_keys_to_Saint_Peter_by_Pietro_Perugino.jpg",
+    "avatar": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/El_Greco_-_Saint_Peter_and_Saint_Paul_-_WGA10471.jpg/320px-El_Greco_-_Saint_Peter_and_Saint_Paul_-_WGA10471.jpg"
   },
   "era2": {
-    "category": "historia",
-    "categoryName": "História da Igreja",
+    "category": "eras_historicas",
+    "categoryName": "Eras Históricas",
     "period": "Séc. III - V d.C.",
     "title": "Patrística e Império Cristão",
     "description": "Fim das perseguições, Édito de Milão e Primeiros Concílios.",
@@ -67,10 +69,12 @@
         "title": "Niceia"
       }
     ],
-    "color": 2450411
+    "color": 2450411,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Council_of_Nicaea.jpg/800px-Council_of_Nicaea.jpg",
+    "avatar": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Augustine_of_Hippo.jpg/320px-Augustine_of_Hippo.jpg"
   },
   "biblia1": {
-    "category": "biblia",
+    "category": "estudos_biblicos",
     "categoryName": "Estudos Bíblicos",
     "period": "Novo Testamento",
     "title": "Os Evangelhos & O Cristo Histórico",
@@ -102,11 +106,13 @@
         "title": "Cafarnaum"
       }
     ],
-    "color": 2450411
+    "color": 2450411,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gutenberg_Bible_B42_Deutsches_Buch_und_Schriftmuseum.jpg/800px-Gutenberg_Bible_B42_Deutsches_Buch_und_Schriftmuseum.jpg",
+    "avatar": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Rembrandt_Harmensz._van_Rijn_016.jpg/320px-Rembrandt_Harmensz._van_Rijn_016.jpg"
   },
   "livro1": {
-    "category": "livros",
-    "categoryName": "Livros dos Santos",
+    "category": "doutores_santos",
+    "categoryName": "Doutores & Santos",
     "period": "397 d.C.",
     "title": "Confissões — Santo Agostinho",
     "description": "Autobiografia e drama da conversão da alma a Deus.",
@@ -132,11 +138,13 @@
         "title": "Hipona"
       }
     ],
-    "color": 14251782
+    "color": 14251782,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg/800px-Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg",
+    "avatar": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg/320px-Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg"
   },
   "milagre1": {
-    "category": "sobrenatural",
-    "categoryName": "Milagres",
+    "category": "milagres_reliquias",
+    "categoryName": "Milagres & Relíquias",
     "period": "Século VIII",
     "title": "Milagre Eucarístico de Lanciano",
     "description": "Hóstia transformada em Carne viva e vinho em Sangue.",
@@ -162,6 +170,8 @@
         "title": "Lanciano"
       }
     ],
-    "color": 16096779
+    "color": 16096779,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Lanciano_Reliquary.jpg/800px-Lanciano_Reliquary.jpg",
+    "avatar": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Lanciano_Reliquary.jpg/320px-Lanciano_Reliquary.jpg"
   }
 }
