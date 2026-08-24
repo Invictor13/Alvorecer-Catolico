@@ -515,10 +515,13 @@ function toggleSidebar() {
 }
 
 function handleSidebarMouseLeave() {
-  if(sidebarOpen) {
-    toggleSidebar();
+  // on mobile, don't auto-close on mouse leave since hover behavior is unreliable
+  if(window.innerWidth >= 1024) {
+    if(sidebarOpen) {
+      toggleSidebar();
+    }
+    if(document.getElementById('preview-stage').classList.contains('hidden') === false) resetToAmbient();
   }
-  if(document.getElementById('preview-stage').classList.contains('hidden') === false) resetToAmbient();
 }
 
 function filterSidebar(cat) {
