@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Séc. I – II • Era Apostólica",
+    "churchDesc": "Início em Pentecostes e expansão no Mediterrâneo.",
+    "humanityDesc": "Pax Romana e estradas unificadas.",
+    "center": [
+      38,
+      25
+    ],
+    "zoom": 4,
+    "markers": [
+      {
+        "lat": 31.7683,
+        "lng": 35.2137,
+        "title": "Jerusalém"
+      },
+      {
+        "lat": 41.9028,
+        "lng": 12.4964,
+        "title": "Roma"
+      }
+    ]
+  },
+  {
+    "title": "Séc. IV – V • Império Cristão",
+    "churchDesc": "Édito de Milão e Concílio de Niceia.",
+    "humanityDesc": "Divisão de Roma e invasões bárbaras.",
+    "center": [
+      40.4,
+      29.7
+    ],
+    "zoom": 4,
+    "markers": [
+      {
+        "lat": 40.4286,
+        "lng": 29.7215,
+        "title": "Niceia"
+      }
+    ]
+  }
+]
