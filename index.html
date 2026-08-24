@@ -41,60 +41,76 @@
   >
     <div
       id="splash-screen"
-      class="fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-1000 ease-in-out"
+      class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center transition-all duration-[800ms] ease-in-out"
     >
+      <!-- Central Gold Halo -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-full bg-gold-500/20 blur-[100px] animate-halo-pulse"></div>
+      </div>
+
       <div
-        class="text-center px-6 max-w-2xl mx-auto flex flex-col items-center space-y-6 animate-fade-in"
+        class="relative z-10 text-center px-6 py-10 max-w-2xl mx-auto flex flex-col items-center space-y-6 sm:space-y-8 rounded-2xl border border-gold-600/20 bg-black/40 shadow-2xl backdrop-blur-sm"
       >
-        <!-- Cruz Pulsante -->
+        <!-- Símbolo de Abertura -->
         <div
-          class="w-20 h-20 rounded-full bg-gradient-to-tr from-marian-900 via-marian-600 to-gold-400 p-[2px] shadow-2xl mb-2 animate-pulse"
+          class="text-gold-500/80 mb-2 animate-scale-fade text-3xl sm:text-4xl"
         >
-          <div
-            class="w-full h-full bg-white dark:bg-slate-950 rounded-full flex items-center justify-center"
-          >
-            <i
-              data-lucide="cross"
-              class="w-10 h-10 text-marian-800 dark:text-gold-400"
-            ></i>
-          </div>
+          ✠
         </div>
 
-        <!-- Título de Boas Vindas -->
+        <!-- Título de Impacto -->
         <h1
-          class="font-cinzel text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-wide"
+          class="font-cinzel text-3xl sm:text-5xl lg:text-6xl font-bold bg-[length:200%_auto] bg-gradient-to-r from-yellow-100 via-gold-400 to-yellow-100 bg-clip-text text-transparent animate-shine tracking-wide opacity-0 animate-scale-fade delay-300"
         >
-          Seja Bem-vindo
+          Alvorecer Católico
         </h1>
 
-        <!-- Textos Editoriais -->
-        <div class="space-y-4">
+        <!-- Lema Espiritual -->
+        <p
+            class="font-garamond italic text-lg sm:text-2xl text-yellow-100/90 leading-relaxed opacity-0 animate-slide-up-slow delay-[900ms] px-4"
+        >
+            “A luz resplandece nas trevas”
+        </p>
+
+        <!-- Divisor Secundário -->
+        <div class="w-full flex items-center justify-center opacity-0 animate-fade-in delay-[1200ms]">
+            <div class="w-16 h-px bg-gradient-to-r from-transparent via-gold-700/50 to-transparent"></div>
+        </div>
+
+        <!-- Mensagem de Boas-Vindas -->
+        <div class="space-y-4 max-w-lg opacity-0 animate-slide-up-slow delay-[1500ms] px-2">
           <p
-            class="font-garamond italic text-xl sm:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed"
+            class="font-garamond text-base sm:text-xl text-slate-300 leading-relaxed"
           >
-            Viva a história da Igreja Católica, em uma revolução digital.
-          </p>
-          <p
-            class="font-garamond italic text-lg sm:text-xl text-slate-500 dark:text-slate-400"
-          >
-            Este site é completamente grátis e livre de propagandas.
+            Uma enciclopédia visual e interativa que conecta a linha do tempo, o mapa histórico e o legado doutrinal de 2.000 anos da Igreja.
           </p>
         </div>
 
-        <!-- Assinatura / Créditos -->
+        <!-- Assinatura de Autoria -->
         <div
-          class="pt-10 mt-6 border-t border-slate-200 dark:border-slate-800/80 w-3/4 mx-auto"
+          class="flex flex-col items-center opacity-0 animate-slide-up-slow delay-[1800ms] mt-4"
         >
           <p
-            class="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-slate-400 dark:text-slate-500 mb-1.5"
+            class="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-gold-600/60 mb-1.5"
           >
-            Desenvolvido por
+            Produzido por
           </p>
           <p
-            class="font-cinzel font-bold text-marian-800 dark:text-gold-400 text-sm sm:text-base tracking-wider"
+            class="font-cinzel font-bold text-gold-500/80 text-xs sm:text-sm tracking-widest"
           >
             Victor Ladislau Viana
           </p>
+        </div>
+
+        <!-- Botão de Entrada -->
+        <div class="pt-6 opacity-0 animate-fade-in delay-[2200ms]">
+            <button
+                onclick="enterPortal()"
+                class="px-8 py-3 rounded-full bg-transparent border border-gold-500/40 text-gold-400 font-cinzel font-bold uppercase tracking-widest text-sm hover:bg-gold-900/30 hover:border-gold-400 transition-all duration-500 relative overflow-hidden group shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_25px_rgba(245,158,11,0.2)]"
+            >
+                <div class="absolute inset-0 w-full h-full bg-[linear-gradient(110deg,transparent,25%,rgba(245,158,11,0.2),50%,transparent,75%,rgba(245,158,11,0.2),100%)] bg-[length:200%_100%] animate-shimmer-btn opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <span class="relative z-10 flex items-center gap-2">Adentrar o Portal <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+            </button>
         </div>
       </div>
     </div>
