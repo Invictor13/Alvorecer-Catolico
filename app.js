@@ -27,15 +27,33 @@ async function init() {
   loadDailyLiturgy();
   initThreeAmbient();
   lucide.createIcons();
+}
 
+async function enterPortal() {
   const splash = document.getElementById('splash-screen');
+  const ambientCanvas = document.getElementById('ambient-canvas');
+
+  // Trigger Sound Effect via Tone.js Context without background loop
+  if(Tone.context.state !== 'running') {
+    await Tone.start();
+  }
+  const synth = new Tone.PolySynth(Tone.FMSynth, {
+    envelope: { attack: 0.1, decay: 2, sustain: 0.2, release: 2 }
+  }).toDestination();
+  synth.volume.value = -15;
+  synth.triggerAttackRelease(["C3", "C4"], "2n");
+
+  // Animate Splash Out and Canvas Expand
+  if (ambientCanvas) {
+    ambientCanvas.style.transition = 'transform 3s cubic-bezier(0.16, 1, 0.3, 1)';
+    ambientCanvas.style.transform = 'scale(1.05)';
+  }
+
   if (splash) {
+    splash.classList.add('opacity-0');
     setTimeout(() => {
-      splash.classList.add('opacity-0');
-      setTimeout(() => {
-        splash.remove();
-      }, 1000);
-    }, 3000);
+      splash.remove();
+    }, 1000);
   }
 }
 
@@ -323,6 +341,7 @@ function filterSidebar(cat) {
 
 // Expose handlers to window to keep compatibility with HTML inline `onclick`
 window.resetToAmbient = resetToAmbient;
+window.enterPortal = enterPortal;
 window.toggleAudio = toggleAudio;
 window.openModal = openModal;
 window.toggleDarkMode = toggleDarkMode;
