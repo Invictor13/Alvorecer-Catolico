@@ -117,43 +117,43 @@
       class="sticky top-0 z-40 glass-panel border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-300 hover:bg-white/95 dark:hover:bg-slate-900/95 backdrop-blur-xl"
     >
       <div
-        class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between"
+        class="max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-10 min-h-[5rem] py-2 sm:py-0 sm:h-20 flex items-center justify-between"
       >
         <!-- Logo -->
         <div
-          class="flex items-center space-x-3 sm:space-x-4 cursor-pointer group"
+          class="flex items-center space-x-2 sm:space-x-4 cursor-pointer group"
           onclick="resetToAmbient()"
         >
-          <div class="relative">
+          <div class="relative flex-shrink-0">
             <div
               class="absolute inset-0 bg-gold-400/50 dark:bg-gold-500/40 blur-md rounded-full group-hover:scale-125 transition-transform duration-500 animate-pulse"
             ></div>
             <div
-              class="relative w-12 h-12 rounded-full bg-gradient-to-tr from-marian-900 via-marian-600 to-gold-400 p-[2px] shadow-lg group-hover:rotate-12 transition-transform duration-500 z-10"
+              class="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-marian-900 via-marian-600 to-gold-400 p-[2px] shadow-lg group-hover:rotate-12 transition-transform duration-500 z-10"
             >
               <div
                 class="w-full h-full bg-white dark:bg-slate-950 rounded-full flex items-center justify-center"
               >
                 <i
                   data-lucide="cross"
-                  class="w-6 h-6 text-marian-800 dark:text-gold-400 group-hover:text-sacred-700 transition-colors"
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-marian-800 dark:text-gold-400 group-hover:text-sacred-700 transition-colors"
                 ></i>
               </div>
             </div>
           </div>
           <div class="flex flex-col justify-center mt-1">
             <h1
-              class="font-cinzel text-xl sm:text-2xl lg:text-3xl font-bold tracking-wide bg-[length:200%_auto] bg-gradient-to-r from-marian-900 via-sacred-700 to-marian-900 dark:from-marian-400 dark:via-gold-400 dark:to-marian-400 bg-clip-text text-transparent animate-shine drop-shadow-sm"
+              class="font-cinzel text-lg sm:text-2xl lg:text-3xl leading-tight sm:leading-normal font-bold tracking-wide bg-[length:200%_auto] bg-gradient-to-r from-marian-900 via-sacred-700 to-marian-900 dark:from-marian-400 dark:via-gold-400 dark:to-marian-400 bg-clip-text text-transparent animate-shine drop-shadow-sm"
             >
               Alvorecer Católico
             </h1>
             <p
-              class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-semibold tracking-[0.2em] uppercase flex items-center gap-1.5 -mt-0.5"
+              class="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-semibold tracking-[0.1em] sm:tracking-[0.2em] uppercase flex items-center gap-1.5 -mt-0.5 sm:-mt-0.5 leading-tight"
             >
               <span
                 class="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse hidden sm:block"
               ></span>
-              Portal de Estudos & Tradição
+              Portal de Estudos <span class="hidden sm:inline">& Tradição</span><span class="sm:hidden">&<br/>Tradição</span>
             </p>
           </div>
         </div>
@@ -206,12 +206,12 @@
     <button
       onclick="toggleSidebar()"
       id="floating-toggle"
-      class="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-white/95 dark:bg-slate-900/95 border border-l-0 border-slate-200 dark:border-slate-700 shadow-xl p-3 rounded-r-2xl text-slate-400 hover:text-marian-700 dark:hover:text-gold-400 hover:pr-5 transition-all duration-300 flex items-center justify-center group backdrop-blur-md w-12 hover:w-14"
+      class="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-white/95 dark:bg-slate-900/95 border border-l-0 border-slate-200 dark:border-slate-700 shadow-xl p-2 sm:p-3 rounded-r-2xl text-slate-400 hover:text-marian-700 dark:hover:text-gold-400 sm:hover:pr-5 transition-all duration-300 flex items-center justify-center group backdrop-blur-md w-10 sm:w-12 sm:hover:w-14 opacity-80 hover:opacity-100 sm:opacity-100"
     >
       <i
         data-lucide="chevron-right"
         id="floating-toggle-icon"
-        class="w-6 h-6 group-hover:scale-110 transition-transform"
+        class="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform"
       ></i>
     </button>
 
@@ -223,7 +223,7 @@
       <aside
         id="sidebar-drawer"
         onmouseleave="handleSidebarMouseLeave()"
-        class="fixed inset-y-0 left-0 z-50 w-80 sm:w-96 flex-shrink-0 glass-panel shadow-2xl flex flex-col transition-transform duration-500 cubic-bezier(0.16, 1, 0.3, 1) transform -translate-x-full h-full"
+        class="fixed inset-y-0 left-0 z-50 w-[85vw] max-w-[320px] sm:w-96 sm:max-w-none flex-shrink-0 glass-panel shadow-2xl flex flex-col transition-transform duration-500 cubic-bezier(0.16, 1, 0.3, 1) transform -translate-x-full h-full"
       >
         <div class="p-5 h-full overflow-y-auto flex flex-col">
           <div
@@ -337,7 +337,7 @@
         <!-- PALCO AMBIENTE (PÁGINA INICIAL CLEAN) -->
         <div
           id="ambient-stage"
-          class="relative w-full max-w-[1400px] mx-auto rounded-2xl overflow-hidden flex items-center justify-center p-6 sm:p-14 min-h-[650px] animate-fade-in"
+          class="relative w-full max-w-[1400px] mx-auto rounded-2xl overflow-hidden flex items-center justify-center p-4 sm:p-14 min-h-[500px] sm:min-h-[650px] animate-fade-in"
         >
           <canvas id="ambient-canvas"></canvas>
 
@@ -380,12 +380,12 @@
 
               <h2
                 id="home-liturgy-title"
-                class="font-cinzel text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-wide mb-6 drop-shadow-sm leading-tight text-center animate-slide-up"
+                class="font-cinzel text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-wide mb-4 sm:mb-6 drop-shadow-sm leading-tight text-center animate-slide-up"
                 style="animation-delay: 0.2s"
               ></h2>
 
               <div
-                class="relative mb-8 w-full px-4 sm:px-10 animate-slide-up"
+                class="relative mb-6 sm:mb-8 w-full px-2 sm:px-10 animate-slide-up"
                 style="animation-delay: 0.3s"
               >
                 <i
@@ -394,7 +394,7 @@
                 ></i>
                 <p
                   id="home-liturgy-snippet"
-                  class="font-garamond text-xl sm:text-2xl text-slate-600 dark:text-slate-300 italic leading-relaxed text-center"
+                  class="font-garamond text-lg sm:text-2xl text-slate-600 dark:text-slate-300 italic leading-relaxed text-center px-2"
                 ></p>
                 <i
                   data-lucide="quote"
@@ -779,11 +779,11 @@
     <!-- Modal de Busca Rápida -->
     <div
       id="search-modal"
-      class="modal-overlay"
+      class="modal-overlay p-4 sm:p-6"
       onclick="closeModal(event, 'search-modal')"
     >
       <div
-        class="modal-content w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700"
+        class="modal-content w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-700"
         onclick="event.stopPropagation()"
       >
         <div class="flex items-center justify-between mb-4">
@@ -825,11 +825,11 @@
     <!-- Modal Liturgia e Homilia -->
     <div
       id="liturgy-modal"
-      class="modal-overlay"
+      class="modal-overlay p-4 sm:p-6"
       onclick="closeModal(event, 'liturgy-modal')"
     >
       <div
-        class="modal-content w-full max-w-2xl bg-slate-50 dark:bg-slate-900 rounded-2xl p-0 shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[85vh]"
+        class="modal-content w-full max-w-2xl bg-slate-50 dark:bg-slate-900 rounded-2xl p-0 shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh]"
         onclick="event.stopPropagation()"
       >
         <!-- Cabeçalho do Modal -->
@@ -894,11 +894,11 @@
     <!-- Modal Localizador de Paróquias -->
     <div
       id="church-modal"
-      class="modal-overlay"
+      class="modal-overlay p-4 sm:p-6"
       onclick="closeModal(event, 'church-modal')"
     >
       <div
-        class="modal-content w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col h-[80vh]"
+        class="modal-content w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col h-[90vh] sm:h-[80vh]"
         onclick="event.stopPropagation()"
       >
         <div class="flex items-center justify-between mb-4">
