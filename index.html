@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alvorecer Católico - Portal de Estudos & Tradição</title>
+  
+  <!-- Google Fonts: Cinzel, EB Garamond & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Three.js (Partículas) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Tone.js (Música Sacra) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            marian: { 50: '#eff6ff', 100: '#dbeaff', 200: '#bfdbfe', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#172554' },
+            sacred: { 700: '#9f1239', 800: '#881337', 900: '#4c0519' },
+            gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          },
+          fontFamily: {
+            cinzel: ['Cinzel', 'serif'],
+            garamond: ['EB Garamond', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'parallax-bg': 'parallaxBg 30s ease-in-out infinite alternate',
+            'shine': 'shine 5s linear infinite',
+            'float': 'float 3s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            parallaxBg: { '0%': { backgroundPosition: '0% 0%' }, '100%': { backgroundPosition: '100% 100%' } },
+            shine: { '0%': { backgroundPosition: '200% center' }, '100%': { backgroundPosition: '-200% center' } },
+            float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-4px)' } }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.90);
+      --glass-border: rgba(226, 232, 240, 0.85);
+    }
+    .dark {
+      --glass-bg: rgba(15, 23, 42, 0.85);
+      --glass-border: rgba(51, 65, 85, 0.85);
+    }
+
+    body { transition: background-color 0.4s ease, color 0.4s ease; }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+    #ambient-canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+    }
+
+    .parallax-container {
+      position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: 1rem;
+      background: radial-gradient(circle at center, rgba(37,99,235,0.05) 0%, transparent 70%);
+      background-size: 200% 200%;
+    }
+    .dark .parallax-container {
+      background: radial-gradient(circle at center, rgba(251,191,36,0.05) 0%, transparent 70%);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    
+    .modal-content {
+      transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-marian-600 selection:text-white">
+
+  <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-1000 ease-in-out">
+    <div class="text-center px-6 max-w-2xl mx-auto flex flex-col items-center space-y-6 animate-fade-in">
+      
+      <!-- Cruz Pulsante -->
+      <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-marian-900 via-marian-600 to-gold-400 p-[2px] shadow-2xl mb-2 animate-pulse">
+        <div class="w-full h-full bg-white dark:bg-slate-950 rounded-full flex items-center justify-center">
+          <i data-lucide="cross" class="w-10 h-10 text-marian-800 dark:text-gold-400"></i>
+        </div>
+      </div>
+
+      <!-- Título de Boas Vindas -->
+      <h1 class="font-cinzel text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-wide">
+        Seja Bem-vindo
+      </h1>
+      
+      <!-- Textos Editoriais -->
+      <div class="space-y-4">
+        <p class="font-garamond italic text-xl sm:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed">
+          Viva a história da Igreja Católica, em uma revolução digital.
+        </p>
+        <p class="font-garamond italic text-lg sm:text-xl text-slate-500 dark:text-slate-400">
+          Este site é completamente grátis e livre de propagandas.
+        </p>
+      </div>
+
+      <!-- Assinatura / Créditos -->
+      <div class="pt-10 mt-6 border-t border-slate-200 dark:border-slate-800/80 w-3/4 mx-auto">
+        <p class="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-slate-400 dark:text-slate-500 mb-1.5">
+          Desenvolvido por
+        </p>
+        <p class="font-cinzel font-bold text-marian-800 dark:text-gold-400 text-sm sm:text-base tracking-wider">
+          Victor Ladislau Viana
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-300 hover:bg-white/95 dark:hover:bg-slate-900/95 backdrop-blur-xl">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <div class="flex items-center space-x-3 sm:space-x-4 cursor-pointer group" onclick="resetToAmbient()">
+        <div class="relative">
+          <div class="absolute inset-0 bg-gold-400/50 dark:bg-gold-500/40 blur-md rounded-full group-hover:scale-125 transition-transform duration-500 animate-pulse"></div>
+          <div class="relative w-12 h-12 rounded-full bg-gradient-to-tr from-marian-900 via-marian-600 to-gold-400 p-[2px] shadow-lg group-hover:rotate-12 transition-transform duration-500 z-10">
+            <div class="w-full h-full bg-white dark:bg-slate-950 rounded-full flex items-center justify-center">
+              <i data-lucide="cross" class="w-6 h-6 text-marian-800 dark:text-gold-400 group-hover:text-sacred-700 transition-colors"></i>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col justify-center mt-1">
+          <h1 class="font-cinzel text-xl sm:text-2xl lg:text-3xl font-bold tracking-wide bg-[length:200%_auto] bg-gradient-to-r from-marian-900 via-sacred-700 to-marian-900 dark:from-marian-400 dark:via-gold-400 dark:to-marian-400 bg-clip-text text-transparent animate-shine drop-shadow-sm">
+            Alvorecer Católico
+          </h1>
+          <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-semibold tracking-[0.2em] uppercase flex items-center gap-1.5 -mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse hidden sm:block"></span> 
+            Portal de Estudos & Tradição
+          </p>
+        </div>
+      </div>
+
+      <!-- Ações Rápidas -->
+      <div class="flex items-center space-x-1 sm:space-x-3">
+        
+        <button onclick="toggleAudio()" id="btn-audio" class="relative p-2.5 rounded-xl text-slate-500 hover:text-marian-700 hover:bg-marian-50 dark:text-slate-400 dark:hover:text-gold-400 dark:hover:bg-slate-800/80 border border-transparent hover:border-marian-100 dark:hover:border-slate-700 transition-all flex items-center gap-2 group" title="Música Sacra">
+          <i data-lucide="music" class="w-5 h-5 group-hover:animate-float"></i>
+          <span class="hidden lg:inline text-xs font-bold uppercase tracking-wider">Atmosfera Sonora</span>
+        </button>
+
+        <button onclick="openModal('search-modal')" class="p-2.5 rounded-xl text-slate-500 hover:text-marian-700 hover:bg-marian-50 dark:text-slate-400 dark:hover:text-gold-400 dark:hover:bg-slate-800/80 border border-transparent hover:border-marian-100 dark:hover:border-slate-700 transition-all group" title="Buscar no portal">
+          <i data-lucide="search" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+        </button>
+
+        <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl text-slate-500 hover:text-marian-700 hover:bg-marian-50 dark:text-slate-400 dark:hover:text-gold-400 dark:hover:bg-slate-800/80 border border-transparent hover:border-marian-100 dark:hover:border-slate-700 transition-all group" title="Modo Vigília (Noturno)">
+          <i data-lucide="moon" id="theme-icon" class="w-5 h-5 group-hover:-rotate-12 transition-transform"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Botão Flutuante Elegante para o Índice Geral -->
+  <button onclick="toggleSidebar()" id="floating-toggle" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-white/95 dark:bg-slate-900/95 border border-l-0 border-slate-200 dark:border-slate-700 shadow-xl p-3 rounded-r-2xl text-slate-400 hover:text-marian-700 dark:hover:text-gold-400 hover:pr-5 transition-all duration-300 flex items-center justify-center group backdrop-blur-md w-12 hover:w-14">
+    <i data-lucide="chevron-right" id="floating-toggle-icon" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+  </button>
+
+  <!-- Container Principal Sem Margens Fixas da Sidebar -->
+  <div class="flex-1 w-full mx-auto p-4 sm:p-6 lg:p-10 flex relative z-10 overflow-hidden">
+
+    <!-- MENU LATERAL (OVERLAY ANIMADO) -->
+    <aside id="sidebar-drawer" onmouseleave="handleSidebarMouseLeave()" class="fixed inset-y-0 left-0 z-50 w-80 sm:w-96 flex-shrink-0 glass-panel shadow-2xl flex flex-col transition-transform duration-500 cubic-bezier(0.16, 1, 0.3, 1) transform -translate-x-full h-full">
+      
+      <div class="p-5 h-full overflow-y-auto flex flex-col">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-700">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="compass" class="w-5 h-5 text-marian-800 dark:text-gold-400"></i>
+            <h2 class="font-cinzel font-bold text-slate-900 dark:text-slate-100 text-base">Índice Geral</h2>
+          </div>
+          <button onclick="toggleSidebar()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Botão de Destaque para a Linha do Tempo -->
+        <button onclick="loadTimelineStage(); toggleSidebar()" class="w-full mb-6 relative overflow-hidden rounded-xl p-4 text-left border border-marian-200 dark:border-marian-800/50 bg-gradient-to-br from-marian-50 to-white dark:from-marian-950/40 dark:to-slate-900 group shadow-sm hover:shadow-md transition-all">
+          <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 group-hover:opacity-40 transition-opacity"></div>
+          <div class="relative z-10 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-marian-100 dark:bg-marian-900/50 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="map-pin" class="w-5 h-5 text-marian-700 dark:text-marian-400 group-hover:-translate-y-1 transition-transform"></i>
+            </div>
+            <div>
+              <div class="font-cinzel text-sm font-bold text-marian-950 dark:text-slate-100">Linha do Tempo Global</div>
+              <div class="text-[10px] uppercase tracking-wider text-marian-700 dark:text-marian-400 font-medium mt-0.5">Mapa Histórico Interativo</div>
+            </div>
+          </div>
+        </button>
+
+        <!-- Filtros do Índice Lateral -->
+        <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl mb-4 text-xs font-medium">
+          <button onclick="filterSidebar('todos')" id="filter-todos" class="sidebar-filter-btn px-2 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-xs text-marian-900 dark:text-white font-semibold transition-all">Todos</button>
+          <button onclick="filterSidebar('historia')" id="filter-historia" class="sidebar-filter-btn px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">História</button>
+          <button onclick="filterSidebar('biblia')" id="filter-biblia" class="sidebar-filter-btn px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Bíblia</button>
+          <button onclick="filterSidebar('sobrenatural')" id="filter-sobrenatural" class="sidebar-filter-btn px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Milagres</button>
+        </div>
+
+        <div id="sidebar-content" class="space-y-6 text-sm flex-1 pb-10">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1 w-full min-w-0 relative flex flex-col justify-center items-center">
+
+      <!-- PALCO AMBIENTE (PÁGINA INICIAL CLEAN) -->
+      <div id="ambient-stage" class="relative w-full max-w-[1400px] mx-auto rounded-2xl overflow-hidden flex items-center justify-center p-6 sm:p-14 min-h-[650px] animate-fade-in">
+        <canvas id="ambient-canvas"></canvas>
+
+        <div class="relative z-10 w-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto px-4">
+          
+          <!-- Centro: A Beleza da Fé -->
+          <div class="relative mb-8 group">
+            <div class="absolute inset-0 bg-gold-400/30 dark:bg-gold-500/20 blur-xl rounded-full group-hover:scale-110 transition-transform duration-700"></div>
+            <div class="relative w-24 h-24 rounded-full bg-gradient-to-tr from-marian-900 via-marian-700 to-gold-400 p-[2px] shadow-xl group-hover:shadow-2xl transition-all duration-500">
+              <div class="w-full h-full bg-white dark:bg-slate-950 rounded-full flex items-center justify-center">
+                <i data-lucide="cross" class="w-10 h-10 text-marian-800 dark:text-gold-500 transition-colors"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Liturgia Principal em Destaque -->
+          <div class="flex flex-col items-center max-w-3xl mx-auto mb-10 w-full">
+            <div class="flex items-center space-x-2 text-sacred-700 dark:text-rose-400 mb-4 animate-slide-up" style="animation-delay: 0.1s">
+              <i data-lucide="book-open" class="w-5 h-5"></i>
+              <span class="text-[11px] font-bold uppercase tracking-[0.2em]" id="home-liturgy-date"></span>
+            </div>
+            
+            <h2 id="home-liturgy-title" class="font-cinzel text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-wide mb-6 drop-shadow-sm leading-tight text-center animate-slide-up" style="animation-delay: 0.2s">
+            </h2>
+            
+            <div class="relative mb-8 w-full px-4 sm:px-10 animate-slide-up" style="animation-delay: 0.3s">
+              <i data-lucide="quote" class="w-8 h-8 text-slate-200 dark:text-slate-800/60 absolute -top-4 left-0 transform -scale-x-100 hidden sm:block"></i>
+              <p id="home-liturgy-snippet" class="font-garamond text-xl sm:text-2xl text-slate-600 dark:text-slate-300 italic leading-relaxed text-center">
+              </p>
+              <i data-lucide="quote" class="w-8 h-8 text-slate-200 dark:text-slate-800/60 absolute -bottom-4 right-0 hidden sm:block"></i>
+            </div>
+
+            <button onclick="openModal('liturgy-modal')" class="group relative px-6 py-3 rounded-full bg-transparent border border-marian-200 dark:border-slate-700 hover:border-marian-600 dark:hover:border-gold-400 transition-all duration-300 overflow-hidden flex items-center gap-2 shadow-sm hover:shadow-md animate-slide-up" style="animation-delay: 0.4s">
+              <div class="absolute inset-0 bg-marian-50 dark:bg-slate-800 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300"></div>
+              <span class="relative z-10 text-xs font-bold uppercase tracking-wider text-marian-800 dark:text-gold-400">Ver Homilia e Comentários</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 relative z-10 text-marian-800 dark:text-gold-400 group-hover:translate-x-1 transition-transform"></i>
+            </button>
+          </div>
+
+          <!-- Botões de Ação Organizados no Rodapé do Centro -->
+          <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <button onclick="loadTimelineStage()" class="flex-1 py-4 px-6 rounded-xl bg-marian-900 hover:bg-marian-800 dark:bg-marian-800 dark:hover:bg-marian-700 text-white font-medium text-sm shadow-xl hover:shadow-2xl transition-all flex items-center justify-center space-x-3 group">
+              <i data-lucide="map" class="w-5 h-5 text-gold-400 group-hover:animate-pulse"></i>
+              <span>Linha do Tempo Global</span>
+            </button>
+            
+            <button onclick="openModal('church-modal')" class="flex-1 py-4 px-6 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-sm shadow-sm hover:shadow transition-all flex items-center justify-center space-x-3 group backdrop-blur-sm">
+              <i data-lucide="map-pin" class="w-5 h-5 text-sacred-700 dark:text-rose-400 group-hover:scale-110 transition-transform"></i>
+              <span>Encontrar Paróquias</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="timeline-map-stage" class="hidden relative w-full flex-1 rounded-2xl glass-panel p-6 sm:p-8 shadow-lg flex flex-col animate-slide-up">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-700 gap-3">
+          <div>
+            <div class="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-marian-600 dark:text-gold-400 mb-1">
+              <i data-lucide="globe" class="w-4 h-4"></i><span>Panorama Histórico Universal</span>
+            </div>
+            <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Expansão da Igreja Católica</h2>
+          </div>
+          <button onclick="resetToAmbient()" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-all flex items-center space-x-1">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>Voltar</span>
+          </button>
+        </div>
+
+        <div class="relative w-full h-[350px] lg:h-[420px] rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700 shadow-inner bg-slate-100 dark:bg-slate-900 mb-6">
+          <div id="giant-map" class="w-full h-full relative z-10"></div>
+        </div>
+
+        <div class="bg-white/80 dark:bg-slate-900/80 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-xs">
+          <div class="text-center mb-4">
+            <h3 id="timeline-era-title" class="font-cinzel font-bold text-xl text-slate-900 dark:text-white">Selecione uma Era</h3>
+          </div>
+          <div id="timeline-controls" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-6">
+            <!-- Controls rendered by JS -->
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-blue-50/70 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+              <div class="flex items-center space-x-2 text-marian-900 dark:text-blue-300 font-bold text-xs uppercase mb-2">
+                <i data-lucide="shield-check" class="w-4 h-4"></i><span>A Igreja Católica</span>
+              </div>
+              <p id="timeline-church-desc" class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed"></p>
+            </div>
+            <div class="p-4 rounded-xl bg-rose-50/70 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800">
+              <div class="flex items-center space-x-2 text-sacred-900 dark:text-rose-300 font-bold text-xs uppercase mb-2">
+                <i data-lucide="swords" class="w-4 h-4"></i><span>A Humanidade / Mundo</span>
+              </div>
+              <p id="timeline-humanity-desc" class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="preview-stage" class="hidden relative w-full flex-1 rounded-2xl glass-panel p-6 sm:p-8 border-amber-200/80 dark:border-amber-900/50 shadow-lg animate-fade-in">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-700">
+          <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+              <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i> Prévia
+            </span>
+            <span id="preview-category-tag" class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase"></span>
+          </div>
+        </div>
+        <h3 id="preview-title" class="font-cinzel text-2xl font-bold text-slate-900 dark:text-white mb-3"></h3>
+        <p id="preview-description" class="font-garamond text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6"></p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div class="text-xs font-bold uppercase text-slate-800 dark:text-slate-200 mb-1">Destaques</div>
+            <p id="preview-highlights" class="text-xs text-slate-600 dark:text-slate-400"></p>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div class="text-xs font-bold uppercase text-slate-800 dark:text-slate-200 mb-1">Figuras Centrais</div>
+            <p id="preview-saints-summary" class="text-xs text-slate-600 dark:text-slate-400"></p>
+          </div>
+        </div>
+        
+        <button id="preview-cta-btn" class="w-full px-4 py-3 rounded-xl bg-marian-800 hover:bg-marian-900 text-white font-medium text-sm shadow-md transition-all flex justify-center items-center space-x-2">
+          <span>Acessar Estudo Completo</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Tela Completa do Estudo -->
+      <div id="content-stage" class="hidden relative w-full flex-1 rounded-2xl glass-panel p-6 sm:p-8 shadow-lg animate-slide-up overflow-hidden">
+        <div class="parallax-container animate-parallax-bg"></div> <!-- Parallax BG -->
+        
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-200 dark:border-slate-700 gap-4">
+          <div>
+            <div class="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-marian-600 dark:text-gold-400 mb-1">
+              <span id="content-category-tag"></span><span>•</span><span id="content-period-tag"></span>
+            </div>
+            <h2 id="content-title" class="font-cinzel text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white shadow-sm"></h2>
+          </div>
+          <button onclick="resetToAmbient()" class="px-3.5 py-2 rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium transition-all flex items-center space-x-1">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i><span>Modo Repouso</span>
+          </button>
+        </div>
+
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <h3 class="font-cinzel font-bold text-lg text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+                <i data-lucide="book-open-text" class="w-5 h-5 text-marian-600 dark:text-gold-400"></i>
+                <span>Síntese Teológica & Histórica</span>
+              </h3>
+              <p id="content-description" class="font-garamond text-lg text-slate-700 dark:text-slate-300 leading-relaxed"></p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="bg-blue-50/90 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-100 dark:border-blue-800 backdrop-blur-sm">
+                <div class="text-xs font-bold uppercase text-marian-800 dark:text-blue-300 mb-1">Destaques Doutrinários</div>
+                <p id="content-highlights" class="text-xs text-slate-700 dark:text-slate-300"></p>
+              </div>
+              <div class="bg-amber-50/90 dark:bg-amber-900/30 rounded-xl p-4 border border-amber-100 dark:border-amber-800 backdrop-blur-sm">
+                <div class="text-xs font-bold uppercase text-amber-900 dark:text-amber-300 mb-1">Fonte Primária</div>
+                <blockquote id="content-quote" class="font-garamond italic text-sm text-slate-800 dark:text-slate-200"></blockquote>
+              </div>
+            </div>
+
+            <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <h4 class="font-cinzel font-bold text-sm text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-sacred-700 dark:text-rose-400"></i><span>Geografia Sagrada</span>
+              </h4>
+              <div id="content-map" class="w-full h-56 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative z-10"></div>
+            </div>
+          </div>
+
+          <div class="relative z-10 space-y-6">
+            <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <h3 class="font-cinzel font-bold text-base text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+                <i data-lucide="user-check" class="w-4 h-4 text-gold-600 dark:text-gold-400"></i><span>Testemunhas da Fé</span>
+              </h3>
+              <div id="content-saints" class="space-y-3"></div>
+            </div>
+
+            <div class="bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-5 border border-slate-800 shadow-sm">
+              <h3 class="font-cinzel font-bold text-base text-gold-400 mb-2 flex items-center space-x-2">
+                <i data-lucide="globe" class="w-4 h-4"></i><span>Cenário Secular</span>
+              </h3>
+              <p id="content-secular" class="text-xs text-slate-300 leading-relaxed"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção de Comentários (Giscus) -->
+        <div class="relative z-10 mt-10 pt-8 border-t border-slate-200 dark:border-slate-700">
+          <h3 class="font-cinzel font-bold text-xl text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <i data-lucide="message-square" class="w-5 h-5 text-marian-600"></i> Comentários & Discussões
+          </h3>
+          <div class="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400 text-center">
+            <p>A integração com o Giscus está ativa. Substitua os atributos <code class="text-rose-500">data-repo</code> no código HTML para ativar os comentários integrados ao seu GitHub Discussions.</p>
+            <!-- Giscus Script Placeholder -->
+            <script src="https://giscus.app/client.js"
+                    data-repo="SEU_USUARIO/SEU_REPOSITORIO"
+                    data-repo-id="XXXXXXXX"
+                    data-category="General"
+                    data-category-id="XXXXXXXX"
+                    data-mapping="pathname"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="bottom"
+                    data-theme="preferred_color_scheme"
+                    data-lang="pt"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  
+  <!-- Modal de Busca Rápida -->
+  <div id="search-modal" class="modal-overlay" onclick="closeModal(event, 'search-modal')">
+    <div class="modal-content w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-cinzel font-bold text-lg text-slate-900 dark:text-white">Busca Rápida</h3>
+        <button onclick="document.getElementById('search-modal').classList.remove('active')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="relative mb-4">
+        <i data-lucide="search" class="w-5 h-5 absolute left-3 top-3 text-slate-400"></i>
+        <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Busque por Agostinho, Fátima, Trento..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-marian-500 transition-colors">
+      </div>
+      <div id="search-results" class="max-h-60 overflow-y-auto space-y-2">
+        <p class="text-xs text-slate-500 text-center py-4">Digite para pesquisar no acervo...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Liturgia e Homilia -->
+  <div id="liturgy-modal" class="modal-overlay" onclick="closeModal(event, 'liturgy-modal')">
+    <div class="modal-content w-full max-w-2xl bg-slate-50 dark:bg-slate-900 rounded-2xl p-0 shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[85vh]" onclick="event.stopPropagation()">
+      <!-- Cabeçalho do Modal -->
+      <div class="bg-white dark:bg-slate-950 p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between sticky top-0 z-10">
+          <div>
+              <div class="flex items-center space-x-2 text-sacred-700 dark:text-rose-400 mb-1">
+                  <i data-lucide="book-open" class="w-4 h-4"></i>
+                  <span class="text-[10px] font-bold uppercase tracking-widest" id="modal-liturgy-date"></span>
+              </div>
+              <h3 class="font-cinzel font-bold text-xl text-slate-900 dark:text-white" id="modal-liturgy-title">Evangelho do Dia</h3>
+          </div>
+          <button onclick="closeModal(event, 'liturgy-modal')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+              <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+      </div>
+      
+      <!-- Conteúdo de Leitura -->
+      <div class="p-6 overflow-y-auto">
+          <div class="max-w-none">
+              <h4 class="font-cinzel text-sm font-bold tracking-wider uppercase text-marian-900 dark:text-marian-400 mb-4">Leitura Bíblica</h4>
+              <p class="font-garamond text-lg leading-relaxed text-slate-700 dark:text-slate-300 italic border-l-4 border-marian-200 dark:border-marian-800 pl-4 bg-white/50 dark:bg-slate-800/50 p-4 rounded-r-xl shadow-sm" id="modal-liturgy-text"></p>
+              
+              <hr class="my-8 border-slate-200 dark:border-slate-800">
+              
+              <h4 class="font-cinzel text-sm font-bold tracking-wider uppercase text-amber-700 dark:text-gold-500 mb-4 flex items-center gap-2">
+                  <i data-lucide="message-circle" class="w-4 h-4"></i> Homilia & Reflexão
+              </h4>
+              <p class="font-sans text-[15px] leading-relaxed text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-950 p-5 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner" id="modal-liturgy-homily"></p>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Localizador de Paróquias -->
+  <div id="church-modal" class="modal-overlay" onclick="closeModal(event, 'church-modal')">
+    <div class="modal-content w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col h-[80vh]" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-cinzel font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-5 h-5 text-sacred-700"></i> Paróquias Próximas
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Descubra igrejas católicas num raio de 5km baseadas no OpenStreetMap.</p>
+        </div>
+        <button onclick="document.getElementById('church-modal').classList.remove('active')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      
+      <div class="flex items-center gap-4 mb-4">
+        <button onclick="findNearbyChurches()" class="px-4 py-2 bg-marian-600 hover:bg-marian-700 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+          <i data-lucide="navigation" class="w-4 h-4"></i> Localizar Minha Posição
+        </button>
+        <span id="church-status" class="text-xs font-medium text-slate-500">Aguardando ação...</span>
+      </div>
+
+      <div class="flex-1 w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 relative">
+        <div id="church-map" class="w-full h-full absolute inset-0"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configurações e Dados Base
+    const dataModules = {
+      era1: { category: "historia", categoryName: "História da Igreja", period: "Séc. I - II d.C.", title: "Era Apostólica e Subapostólica", description: "Período que abrange a pregação direta de Cristo, a efusão do Espírito Santo e a expansão.", highlights: "Concílio de Jerusalém e a fixação do episcopado.", quote: "\"Onde está o Bispo, ali esteja a comunidade...\" — Santo Inácio", secular: "Pax Romana e as estradas imperiais.", saints: [{ name: "São Pedro", role: "Primeiro Papa", detail: "Martírio em 64 d.C." }, { name: "São Paulo", role: "Apóstolo dos Gentios", detail: "Cartas apostólicas." }], mapCenter: [41.9028, 12.4964], mapZoom: 4, markers: [{ lat: 41.9028, lng: 12.4964, title: "Roma" }, { lat: 31.7683, lng: 35.2137, title: "Jerusalém" }], color: 0x2563eb },
+      era2: { category: "historia", categoryName: "História da Igreja", period: "Séc. III - V d.C.", title: "Patrística e Império Cristão", description: "Fim das perseguições, Édito de Milão e Primeiros Concílios.", highlights: "Credo Niceno e cristologia.", quote: "\"Fizeste-nos para ti, Senhor...\" — Sto. Agostinho", secular: "Queda do Império Romano do Ocidente.", saints: [{ name: "Santo Agostinho", role: "Doutor da Igreja", detail: "Bispo de Hipona." }], mapCenter: [40.4286, 29.7215], mapZoom: 4, markers: [{ lat: 40.4286, lng: 29.7215, title: "Niceia" }], color: 0x2563eb },
+      biblia1: { category: "biblia", categoryName: "Estudos Bíblicos", period: "Novo Testamento", title: "Os Evangelhos & O Cristo Histórico", description: "Estudo da vida e ensinamentos de Cristo pelos 4 Evangelistas.", highlights: "Cumprimento das profecias messiânicas.", quote: "\"No princípio era o Verbo...\" — Jo 1,1", secular: "Judeia sob domínio romano.", saints: [{ name: "São Mateus", role: "Evangelista", detail: "Comunidade judaico-cristã." }], mapCenter: [31.7683, 35.2137], mapZoom: 7, markers: [{ lat: 31.7683, lng: 35.2137, title: "Jerusalém" }, { lat: 32.8807, lng: 35.5752, title: "Cafarnaum" }], color: 0x2563eb },
+      livro1: { category: "livros", categoryName: "Livros dos Santos", period: "397 d.C.", title: "Confissões — Santo Agostinho", description: "Autobiografia e drama da conversão da alma a Deus.", highlights: "Reflexões sobre o tempo e a Graça.", quote: "\"Tarde te amei, ó Beleza tão antiga...\"", secular: "Declínio cultural romano.", saints: [{ name: "Santa Mônica", role: "Mãe", detail: "Oração perseverante." }], mapCenter: [36.8912, 7.7472], mapZoom: 5, markers: [{ lat: 36.8912, lng: 7.7472, title: "Hipona" }], color: 0xd97706 },
+      milagre1: { category: "sobrenatural", categoryName: "Milagres", period: "Século VIII", title: "Milagre Eucarístico de Lanciano", description: "Hóstia transformada em Carne viva e vinho em Sangue.", highlights: "Exames comprovam tecido do miocárdio tipo AB.", quote: "\"Eis a Carne e o Sangue...\"", secular: "Crise iconoclasta.", saints: [{ name: "São Longuinho", role: "Tradição", detail: "Centurião." }], mapCenter: [42.2289, 14.3919], mapZoom: 7, markers: [{ lat: 42.2289, lng: 14.3919, title: "Lanciano" }], color: 0xf59e0b }
+    };
+
+    const timelineEras = [
+      { title: "Séc. I – II • Era Apostólica", churchDesc: "Início em Pentecostes e expansão no Mediterrâneo.", humanityDesc: "Pax Romana e estradas unificadas.", center: [38.0, 25.0], zoom: 4, markers: [{ lat: 31.7683, lng: 35.2137, title: "Jerusalém" }, { lat: 41.9028, lng: 12.4964, title: "Roma" }] },
+      { title: "Séc. IV – V • Império Cristão", churchDesc: "Édito de Milão e Concílio de Niceia.", humanityDesc: "Divisão de Roma e invasões bárbaras.", center: [40.4, 29.7], zoom: 4, markers: [{ lat: 40.4286, lng: 29.7215, title: "Niceia" }] }
+    ];
+
+    // Variáveis Globais de Estado
+    let currentLeafletMap = null;
+    let giantLeafletMap = null;
+    let churchLeafletMap = null;
+    let sidebarOpen = false;
+    let particlesMaterial = null; // Para alterar cor no Three.js
+    let audioSynth = null;
+    let audioReverb = null;
+    let isAudioPlaying = false;
+
+    // Inicialização da Sidebar
+    function renderSidebar() {
+      const container = document.getElementById('sidebar-content');
+      let html = '';
+      
+      const groups = {
+        historia: { icon: 'clock', title: 'Eras Históricas', items: ['era1', 'era2'] },
+        biblia: { icon: 'book-open', title: 'Estudos Bíblicos', items: ['biblia1'] },
+        livros: { icon: 'library', title: 'Mestres', items: ['livro1'] },
+        sobrenatural: { icon: 'sparkles', title: 'Milagres', items: ['milagre1'] }
+      };
+
+      for(let [key, group] of Object.entries(groups)) {
+        html += `<div class="sidebar-group" data-group="${key}">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center space-x-1">
+            <i data-lucide="${group.icon}" class="w-3.5 h-3.5 text-marian-600 dark:text-gold-400"></i>
+            <span>${group.title}</span>
+          </h3><ul class="space-y-1">`;
+        
+        group.items.forEach(itemId => {
+          const item = dataModules[itemId];
+          html += `<li>
+            <button onmouseenter="previewSidebarItem('${itemId}')" onclick="loadFullContent('${itemId}')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center justify-between group">
+              <span class="font-medium text-slate-700 dark:text-slate-300 group-hover:text-marian-900 dark:group-hover:text-white">${item.title}</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-marian-600 dark:text-gold-400"></i>
+            </button>
+          </li>`;
+        });
+        html += `</ul></div>`;
+      }
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function initThreeAmbient() {
+      const canvas = document.getElementById('ambient-canvas');
+      if (!canvas) return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+      camera.position.z = 5;
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+      const geometry = new THREE.BufferGeometry();
+      const particlesCount = document.documentElement.classList.contains('dark') ? 200 : 120;
+      const posArray = new Float32Array(particlesCount * 3);
+
+      for(let i=0; i<particlesCount*3; i++) { posArray[i] = (Math.random() - 0.5) * 12; }
+      geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+      // Cor padrão azul (marian)
+      particlesMaterial = new THREE.PointsMaterial({
+        size: 0.04, color: 0x2563eb, transparent: true, opacity: 0.5
+      });
+
+      const particlesMesh = new THREE.Points(geometry, particlesMaterial);
+      scene.add(particlesMesh);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        particlesMesh.rotation.y += 0.0008;
+        particlesMesh.rotation.x += 0.0004;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        if (!canvas.clientWidth) return;
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+      });
+    }
+
+    function updateParticleColor(hexColor) {
+      if(particlesMaterial) {
+        // Transição suave de cor da partícula usando Tweening manual
+        const targetColor = new THREE.Color(hexColor);
+        const currentColor = particlesMaterial.color;
+        let step = 0;
+        const interval = setInterval(() => {
+          step += 0.05;
+          currentColor.lerp(targetColor, step);
+          if(step >= 1) clearInterval(interval);
+        }, 30);
+      }
+    }
+
+    async function toggleAudio() {
+      const btn = document.getElementById('btn-audio');
+      
+      if(!audioSynth) {
+        await Tone.start();
+        audioReverb = new Tone.Reverb({ decay: 10, preDelay: 0.1 }).toDestination();
+        audioSynth = new Tone.PolySynth(Tone.FMSynth, {
+          harmonicity: 1, modulationIndex: 1,
+          oscillator: { type: "sine" },
+          envelope: { attack: 2, decay: 2, sustain: 0.8, release: 4 },
+          modulation: { type: "triangle" }
+        }).connect(audioReverb);
+        audioSynth.volume.value = -20; // Volume suave
+      }
+
+      if(isAudioPlaying) {
+        audioSynth.releaseAll();
+        isAudioPlaying = false;
+        btn.classList.remove('text-marian-700', 'dark:text-gold-400');
+      } else {
+        // Acorde Gregoriano longo (Quartas e Quintas perfeitas)
+        const notes = ["C3", "G3", "C4", "F4"];
+        audioSynth.triggerAttack(notes);
+        isAudioPlaying = true;
+        btn.classList.add('text-marian-700', 'dark:text-gold-400');
+        
+        // Movimento sonoro sutil
+        setInterval(() => {
+          if(!isAudioPlaying) return;
+          if(Math.random() > 0.5) {
+             audioSynth.triggerRelease(["F4"]);
+             setTimeout(() => audioSynth.triggerAttack(["E4"]), 1000);
+          } else {
+             audioSynth.triggerRelease(["E4"]);
+             setTimeout(() => audioSynth.triggerAttack(["F4"]), 1000);
+          }
+        }, 8000);
+      }
+    }
+
+    function loadDailyLiturgy() {
+      // Simulação baseada no dia do ano para sempre mostrar algo relevante
+      const now = new Date();
+      const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+      
+      const verses = [
+        { title: "Evangelho - João 14, 6", text: "Disse-lhe Jesus: Eu sou o caminho, e a verdade e a vida; ninguém vem ao Pai, senão por mim." },
+        { title: "Evangelho - Mateus 5, 14", text: "Vós sois a luz do mundo; não se pode esconder uma cidade edificada sobre um monte." },
+        { title: "Salmo 23, 1", text: "O Senhor é o meu pastor, nada me faltará. Deitar-me faz em verdes pastos." },
+        { title: "Evangelho - Lucas 1, 46", text: "A minha alma engrandece ao Senhor, e o meu espírito se alegra em Deus meu Salvador." }
+      ];
+      
+      const reading = verses[dayOfYear % verses.length];
+      const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+      
+      document.getElementById('liturgy-date').innerText = dateStr;
+      document.getElementById('liturgy-title').innerText = reading.title;
+      document.getElementById('liturgy-text').innerText = reading.text;
+    }
+
+    function previewSidebarItem(key) {
+      if (document.getElementById('content-stage').classList.contains('hidden') === false) return; // Locked if content open
+      
+      const item = dataModules[key];
+      if (!item) return;
+
+      hideAllStages();
+      document.getElementById('preview-stage').classList.remove('hidden');
+
+      document.getElementById('preview-category-tag').innerText = `${item.categoryName} • ${item.period}`;
+      document.getElementById('preview-title').innerText = item.title;
+      document.getElementById('preview-description').innerText = item.description;
+      document.getElementById('preview-highlights').innerText = item.highlights;
+      document.getElementById('preview-saints-summary').innerText = item.saints.map(s=>s.name).join(', ');
+      document.getElementById('preview-cta-btn').onclick = () => loadFullContent(key);
+      
+      updateParticleColor(item.color);
+    }
+
+    function loadFullContent(key) {
+      const item = dataModules[key];
+      if (!item) return;
+
+      hideAllStages();
+      const stage = document.getElementById('content-stage');
+      stage.classList.remove('hidden');
+      
+      // Reinicia a animação (re-aplica classe)
+      stage.classList.remove('animate-slide-up');
+      void stage.offsetWidth; 
+      stage.classList.add('animate-slide-up');
+
+      document.getElementById('content-category-tag').innerText = item.categoryName;
+      document.getElementById('content-period-tag').innerText = item.period;
+      document.getElementById('content-title').innerText = item.title;
+      document.getElementById('content-description').innerText = item.description;
+      document.getElementById('content-highlights').innerText = item.highlights;
+      document.getElementById('content-quote').innerText = item.quote;
+      document.getElementById('content-secular').innerText = item.secular;
+
+      const saintsContainer = document.getElementById('content-saints');
+      saintsContainer.innerHTML = item.saints.map(s => `
+        <div class="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div class="font-bold text-xs text-slate-800 dark:text-slate-200">${s.name}</div>
+          <div class="text-[11px] text-marian-700 dark:text-gold-400 font-medium">${s.role}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">${s.detail}</div>
+        </div>
+      `).join('');
+
+      updateParticleColor(item.color);
+      setTimeout(() => initLeafletMap(item.mapCenter, item.mapZoom, item.markers), 100);
+      
+      if(window.innerWidth < 1024 && sidebarOpen) toggleSidebar();
+    }
+
+    function resetToAmbient() {
+      hideAllStages();
+      document.getElementById('ambient-stage').classList.remove('hidden');
+      updateParticleColor(0x2563eb); // Default Blue
+    }
+
+    function hideAllStages() {
+      ['ambient-stage', 'timeline-map-stage', 'preview-stage', 'content-stage'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+    }
+
+    function loadTimelineStage() {
+      hideAllStages();
+      document.getElementById('timeline-map-stage').classList.remove('hidden');
+      
+      // Renderizar botões da timeline
+      const container = document.getElementById('timeline-controls');
+      container.innerHTML = timelineEras.map((era, idx) => `
+        <button onclick="selectTimelineEra(${idx})" id="era-btn-${idx}" class="timeline-era-btn p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-all font-medium">
+          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-bold truncate">${era.title.split('•')[0]}</div>
+          <div class="text-[11px] font-bold font-cinzel text-slate-800 dark:text-slate-200 truncate">${era.title.split('•')[1]}</div>
+        </button>
+      `).join('');
+      
+      setTimeout(() => { initGiantMap(); selectTimelineEra(0); }, 100);
+    }
+
+    function selectTimelineEra(index) {
+      const era = timelineEras[index];
+      if (!era) return;
+
+      document.querySelectorAll('.timeline-era-btn').forEach((btn, idx) => {
+        if (idx === index) {
+          btn.classList.add('border-marian-500', 'bg-marian-50', 'dark:bg-marian-900/30', 'shadow-sm');
+          btn.classList.remove('border-slate-200', 'dark:border-slate-700', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
+        } else {
+          btn.classList.remove('border-marian-500', 'bg-marian-50', 'dark:bg-marian-900/30', 'shadow-sm');
+          btn.classList.add('border-slate-200', 'dark:border-slate-700', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
+        }
+      });
+
+      document.getElementById('timeline-era-title').innerText = era.title;
+      document.getElementById('timeline-church-desc').innerText = era.churchDesc;
+      document.getElementById('timeline-humanity-desc').innerText = era.humanityDesc;
+
+      updateGiantMap(era.center, era.zoom, era.markers);
+    }
+
+    function initGiantMap() {
+      const container = document.getElementById('giant-map');
+      if (!container) return;
+
+      if (giantLeafletMap) {
+        giantLeafletMap.remove();
+        giantLeafletMap = null;
+      }
+
+      giantLeafletMap = L.map('giant-map', {
+        zoomControl: true,
+        scrollWheelZoom: false
+      }).setView([20.0, 0.0], 2);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CartoDB',
+        maxZoom: 18
+      }).addTo(giantLeafletMap);
+
+      setTimeout(() => {
+        if (giantLeafletMap) giantLeafletMap.invalidateSize();
+      }, 100);
+    }
+
+    function updateGiantMap(center, zoom, markers) {
+      if (!giantLeafletMap) return;
+
+      giantLeafletMap.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+          giantLeafletMap.removeLayer(layer);
+        }
+      });
+
+      giantLeafletMap.setView(center, zoom);
+
+      markers.forEach(m => {
+        L.marker([m.lat, m.lng]).addTo(giantLeafletMap).bindPopup(`<b>${m.title}</b>`);
+      });
+
+      giantLeafletMap.invalidateSize();
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function closeModal(event, id) {
+      if(event) event.stopPropagation();
+      document.getElementById(id).classList.remove('active');
+    }
+    
+    function handleSearch() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const resultsContainer = document.getElementById('search-results');
+      if (query.length < 2) {
+        resultsContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Digite para pesquisar no acervo...</p>';
+        return;
+      }
+      
+      const results = Object.entries(dataModules).filter(([key, item]) => {
+        return item.title.toLowerCase().includes(query) || 
+               item.description.toLowerCase().includes(query) ||
+               item.saints.some(s => s.name.toLowerCase().includes(query));
+      });
+      
+      if (results.length === 0) {
+        resultsContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Nenhum resultado encontrado.</p>';
+        return;
+      }
+      
+      resultsContainer.innerHTML = results.map(([key, item]) => `
+        <div onclick="loadFullContent('${key}'); closeModal(null, 'search-modal')" class="p-3 mb-2 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer transition-colors border border-slate-200 dark:border-slate-700">
+          <div class="text-sm font-bold text-slate-900 dark:text-white">${item.title}</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">${item.description}</div>
+        </div>
+      `).join('');
+    }
+
+    function findNearbyChurches() {
+      const statusText = document.getElementById('church-status');
+      statusText.innerText = "Buscando sua localização...";
+
+      if (!navigator.geolocation) {
+        statusText.innerText = "Geolocalização não suportada pelo navegador.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          statusText.innerText = "Buscando paróquias próximas...";
+          
+          if (!churchLeafletMap) {
+            churchLeafletMap = L.map('church-map').setView([lat, lng], 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(churchLeafletMap);
+          } else {
+            churchLeafletMap.setView([lat, lng], 13);
+          }
+
+          L.marker([lat, lng]).addTo(churchLeafletMap).bindPopup("<b>Sua Localização</b>").openPopup();
+
+          const overpassQuery = `
+            [out:json];
+            (
+              node["amenity"="place_of_worship"]["religion"="christian"]["denomination"="catholic"](around:5000,${lat},${lng});
+              way["amenity"="place_of_worship"]["religion"="christian"]["denomination"="catholic"](around:5000,${lat},${lng});
+            );
+            out center;
+          `;
+          
+          fetch('https://overpass-api.de/api/interpreter', {
+            method: 'POST',
+            body: overpassQuery
+          })
+          .then(response => response.json())
+          .then(data => {
+            const elements = data.elements;
+            if (elements.length === 0) {
+              statusText.innerText = "Nenhuma paróquia encontrada num raio de 5km.";
+              return;
+            }
+            
+            statusText.innerText = `${elements.length} paróquias encontradas!`;
+            
+            const churchIcon = L.icon({
+              iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+              iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+            });
+            
+            elements.forEach(el => {
+              const elLat = el.lat || el.center.lat;
+              const elLng = el.lon || el.center.lon;
+              const name = el.tags.name || "Paróquia Católica";
+              L.marker([elLat, elLng], {icon: churchIcon}).addTo(churchLeafletMap).bindPopup(`<b>${name}</b>`);
+            });
+          })
+          .catch(err => {
+            console.error(err);
+            statusText.innerText = "Erro ao buscar paróquias.";
+          });
+        },
+        (error) => {
+          console.error(error);
+          statusText.innerText = "Permissão de localização negada.";
+        }
+      );
+    }
+
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        themeIcon.setAttribute('data-lucide', 'moon');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        themeIcon.setAttribute('data-lucide', 'sun');
+      }
+      lucide.createIcons();
+    }
+
+    function initLeafletMap(center, zoom, markers) {
+      if (currentLeafletMap) currentLeafletMap.remove();
+      currentLeafletMap = L.map('content-map').setView(center, zoom);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(currentLeafletMap);
+      markers.forEach(m => L.marker([m.lat, m.lng]).addTo(currentLeafletMap).bindPopup(m.title));
+    }
+
+    function loadDailyLiturgy() {
+      // Ajuste para formatar a data dinamicamente no padrão editorial
+      const now = new Date();
+      const options = { weekday: 'long', day: 'numeric', month: 'long' };
+      const dateStr = now.toLocaleDateString('pt-BR', options).toUpperCase();
+      
+      // Simulação baseada no dia do ano
+      const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+      
+      // Banco de leituras com homilias estruturadas
+      const verses = [
+        { 
+          title: "Evangelho (João 14, 6)", 
+          text: "Disse-lhe Jesus: 'Eu sou o caminho, a verdade e a vida; ninguém vem ao Pai, senão por mim.'",
+          homily: "Neste trecho profundo do Evangelho de São João, Cristo não se apresenta apenas como um mestre que aponta uma direção, mas como o próprio Caminho encarnado. A reflexão de hoje nos convida a abandonar as rotas alternativas e ilusórias que o mundo oferece e a fixar nosso olhar unicamente em Jesus. Ele é a Verdade que liberta nossas mentes das ideologias passageiras e a Vida que preenche o vazio da nossa existência de forma definitiva." 
+        },
+        { 
+          title: "Evangelho (Mateus 5, 14)", 
+          text: "Vós sois a luz do mundo; não se pode esconder uma cidade edificada sobre um monte.",
+          homily: "A vocação do cristão não é o isolamento, mas a irradiação. Assim como uma lâmpada não é acesa para ser colocada debaixo de uma cama, a graça que recebemos no nosso batismo deve iluminar os ambientes mais escuros em que vivemos: nossa família, trabalho e sociedade. Os Padres da Igreja nos lembram que nossa luz não tem fonte própria, ela é, na verdade, um puro reflexo da Luz inextinguível de Cristo." 
+        },
+        { 
+          title: "Salmo 23, 1-2", 
+          text: "O Senhor é o meu pastor, nada me faltará. Deitar-me faz em verdes pastos, guia-me mansamente a águas tranquilas.",
+          homily: "O salmista Davi expressa, nestes versos, a mais profunda confiança na Providência Divina. Reconhecer Deus como Pastor significa aceitar a Sua condução diária, mesmo quando os caminhos terrenos parecem áridos, confusos ou perigosos. Na tradição mística da Igreja, os 'verdes pastos' frequentemente representam a Eucaristia e a Palavra Viva, locais onde a alma exausta encontra seu verdadeiro repouso e nutrição espiritual." 
+        },
+        { 
+          title: "Evangelho (Lucas 1, 46-47)", 
+          text: "A minha alma engrandece ao Senhor, e o meu espírito se alegra em Deus meu Salvador.",
+          homily: "O canto do Magnificat é a expressão máxima da humildade exaltada. Maria Santíssima reconhece prontamente que toda a sua grandeza provém unicamente da graça imerecida de Deus. A meditação de hoje nos chama a imitar a postura mariana por excelência: esvaziar-nos do nosso orgulho e de nós mesmos para que o Senhor possa realizar, através da nossa pequenez, as Suas grandes maravilhas no mundo." 
+        }
+      ];
+      
+      const reading = verses[dayOfYear % verses.length];
+      
+      // Atualiza os elementos de destaque na página inicial
+      const homeDate = document.getElementById('home-liturgy-date');
+      if(homeDate) homeDate.innerText = dateStr;
+
+      const homeTitle = document.getElementById('home-liturgy-title');
+      if(homeTitle) homeTitle.innerText = reading.title;
+
+      const homeSnippet = document.getElementById('home-liturgy-snippet');
+      if(homeSnippet) homeSnippet.innerText = `"${reading.text}"`;
+
+      // Atualiza o conteúdo dentro do Modal
+      const modalDate = document.getElementById('modal-liturgy-date');
+      if(modalDate) modalDate.innerText = dateStr;
+      
+      const modalTitle = document.getElementById('modal-liturgy-title');
+      if(modalTitle) modalTitle.innerText = reading.title;
+      
+      const modalText = document.getElementById('modal-liturgy-text');
+      if(modalText) modalText.innerText = reading.text;
+
+      const modalHomily = document.getElementById('modal-liturgy-homily');
+      if(modalHomily) modalHomily.innerText = reading.homily;
+    }
+
+    function toggleSidebar() {
+      sidebarOpen = !sidebarOpen;
+      const sidebar = document.getElementById('sidebar-drawer');
+      const icon = document.getElementById('floating-toggle-icon');
+      
+      if (sidebarOpen) {
+        sidebar.classList.remove('-translate-x-full');
+        icon.setAttribute('data-lucide', 'chevron-left');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        icon.setAttribute('data-lucide', 'chevron-right');
+      }
+      lucide.createIcons();
+    }
+
+    function handleSidebarMouseLeave() {
+      if(sidebarOpen) {
+        toggleSidebar();
+      }
+      if(document.getElementById('preview-stage').classList.contains('hidden') === false) resetToAmbient();
+    }
+
+    function filterSidebar(cat) {
+      document.querySelectorAll('.sidebar-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-xs', 'text-marian-900', 'dark:text-white');
+        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+      });
+      const activeBtn = document.getElementById(`filter-${cat}`);
+      if(activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+        activeBtn.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-xs', 'text-marian-900', 'dark:text-white');
+      }
+      document.querySelectorAll('.sidebar-group').forEach(group => {
+        if(cat === 'todos' || group.getAttribute('data-group') === cat) group.style.display = 'block';
+        else group.style.display = 'none';
+      });
+    }
+
+    // Inicialização ao carregar a página
+    window.onload = function() {
+      if(localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
+      }
+      
+      renderSidebar();
+      loadDailyLiturgy();
+      initThreeAmbient();
+      lucide.createIcons();
+
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        // Aguarda 3 segundos para leitura
+        setTimeout(() => {
+          splash.classList.add('opacity-0'); // Inicia o fade out CSS
+          // Após 1 segundo (tempo da transição CSS), remove do DOM para liberar cliques
+          setTimeout(() => {
+            splash.remove();
+          }, 1000);
+        }, 3000);
+      }
+    };
+  </script>
+</body>
+</html>
