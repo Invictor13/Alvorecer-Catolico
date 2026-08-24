@@ -1,0 +1,167 @@
+{
+  "era1": {
+    "category": "historia",
+    "categoryName": "História da Igreja",
+    "period": "Séc. I - II d.C.",
+    "title": "Era Apostólica e Subapostólica",
+    "description": "Período que abrange a pregação direta de Cristo, a efusão do Espírito Santo e a expansão.",
+    "highlights": "Concílio de Jerusalém e a fixação do episcopado.",
+    "quote": "\"Onde está o Bispo, ali esteja a comunidade...\" — Santo Inácio",
+    "secular": "Pax Romana e as estradas imperiais.",
+    "saints": [
+      {
+        "name": "São Pedro",
+        "role": "Primeiro Papa",
+        "detail": "Martírio em 64 d.C."
+      },
+      {
+        "name": "São Paulo",
+        "role": "Apóstolo dos Gentios",
+        "detail": "Cartas apostólicas."
+      }
+    ],
+    "mapCenter": [
+      41.9028,
+      12.4964
+    ],
+    "mapZoom": 4,
+    "markers": [
+      {
+        "lat": 41.9028,
+        "lng": 12.4964,
+        "title": "Roma"
+      },
+      {
+        "lat": 31.7683,
+        "lng": 35.2137,
+        "title": "Jerusalém"
+      }
+    ],
+    "color": 2450411
+  },
+  "era2": {
+    "category": "historia",
+    "categoryName": "História da Igreja",
+    "period": "Séc. III - V d.C.",
+    "title": "Patrística e Império Cristão",
+    "description": "Fim das perseguições, Édito de Milão e Primeiros Concílios.",
+    "highlights": "Credo Niceno e cristologia.",
+    "quote": "\"Fizeste-nos para ti, Senhor...\" — Sto. Agostinho",
+    "secular": "Queda do Império Romano do Ocidente.",
+    "saints": [
+      {
+        "name": "Santo Agostinho",
+        "role": "Doutor da Igreja",
+        "detail": "Bispo de Hipona."
+      }
+    ],
+    "mapCenter": [
+      40.4286,
+      29.7215
+    ],
+    "mapZoom": 4,
+    "markers": [
+      {
+        "lat": 40.4286,
+        "lng": 29.7215,
+        "title": "Niceia"
+      }
+    ],
+    "color": 2450411
+  },
+  "biblia1": {
+    "category": "biblia",
+    "categoryName": "Estudos Bíblicos",
+    "period": "Novo Testamento",
+    "title": "Os Evangelhos & O Cristo Histórico",
+    "description": "Estudo da vida e ensinamentos de Cristo pelos 4 Evangelistas.",
+    "highlights": "Cumprimento das profecias messiânicas.",
+    "quote": "\"No princípio era o Verbo...\" — Jo 1,1",
+    "secular": "Judeia sob domínio romano.",
+    "saints": [
+      {
+        "name": "São Mateus",
+        "role": "Evangelista",
+        "detail": "Comunidade judaico-cristã."
+      }
+    ],
+    "mapCenter": [
+      31.7683,
+      35.2137
+    ],
+    "mapZoom": 7,
+    "markers": [
+      {
+        "lat": 31.7683,
+        "lng": 35.2137,
+        "title": "Jerusalém"
+      },
+      {
+        "lat": 32.8807,
+        "lng": 35.5752,
+        "title": "Cafarnaum"
+      }
+    ],
+    "color": 2450411
+  },
+  "livro1": {
+    "category": "livros",
+    "categoryName": "Livros dos Santos",
+    "period": "397 d.C.",
+    "title": "Confissões — Santo Agostinho",
+    "description": "Autobiografia e drama da conversão da alma a Deus.",
+    "highlights": "Reflexões sobre o tempo e a Graça.",
+    "quote": "\"Tarde te amei, ó Beleza tão antiga...\"",
+    "secular": "Declínio cultural romano.",
+    "saints": [
+      {
+        "name": "Santa Mônica",
+        "role": "Mãe",
+        "detail": "Oração perseverante."
+      }
+    ],
+    "mapCenter": [
+      36.8912,
+      7.7472
+    ],
+    "mapZoom": 5,
+    "markers": [
+      {
+        "lat": 36.8912,
+        "lng": 7.7472,
+        "title": "Hipona"
+      }
+    ],
+    "color": 14251782
+  },
+  "milagre1": {
+    "category": "sobrenatural",
+    "categoryName": "Milagres",
+    "period": "Século VIII",
+    "title": "Milagre Eucarístico de Lanciano",
+    "description": "Hóstia transformada em Carne viva e vinho em Sangue.",
+    "highlights": "Exames comprovam tecido do miocárdio tipo AB.",
+    "quote": "\"Eis a Carne e o Sangue...\"",
+    "secular": "Crise iconoclasta.",
+    "saints": [
+      {
+        "name": "São Longuinho",
+        "role": "Tradição",
+        "detail": "Centurião."
+      }
+    ],
+    "mapCenter": [
+      42.2289,
+      14.3919
+    ],
+    "mapZoom": 7,
+    "markers": [
+      {
+        "lat": 42.2289,
+        "lng": 14.3919,
+        "title": "Lanciano"
+      }
+    ],
+    "color": 16096779
+  }
+}

@@ -1,0 +1,49 @@
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.90);
+      --glass-border: rgba(226, 232, 240, 0.85);
+    }
+    .dark {
+      --glass-bg: rgba(15, 23, 42, 0.85);
+      --glass-border: rgba(51, 65, 85, 0.85);
+    }
+
+    body { transition: background-color 0.4s ease, color 0.4s ease; }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+    #ambient-canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+    }
+
+    .parallax-container {
+      position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: 1rem;
+      background: radial-gradient(circle at center, rgba(37,99,235,0.05) 0%, transparent 70%);
+      background-size: 200% 200%;
+    }
+    .dark .parallax-container {
+      background: radial-gradient(circle at center, rgba(251,191,36,0.05) 0%, transparent 70%);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .modal-content {
+      transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.active .modal-content { transform: scale(1); }
