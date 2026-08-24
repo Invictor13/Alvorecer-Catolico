@@ -285,43 +285,51 @@
             </div>
           </button>
 
-          <!-- Filtros do Índice Lateral -->
-          <div
-            class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl mb-4 text-xs font-medium"
-          >
-            <button
-              onclick="filterSidebar('todos')"
-              id="filter-todos"
-              class="sidebar-filter-btn px-2 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-xs text-marian-900 dark:text-white font-semibold transition-all"
-            >
-              Todos
-            </button>
-            <button
-              onclick="filterSidebar('historia')"
-              id="filter-historia"
-              class="sidebar-filter-btn px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
-            >
-              História
-            </button>
-            <button
-              onclick="filterSidebar('biblia')"
-              id="filter-biblia"
-              class="sidebar-filter-btn px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
-            >
-              Bíblia
-            </button>
-            <button
-              onclick="filterSidebar('sobrenatural')"
-              id="filter-sobrenatural"
-              class="sidebar-filter-btn px-2 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
-            >
-              Milagres
-            </button>
+
+          <!-- Sidebar Viewport for Hub & Drill-Down sliding -->
+          <div class="relative flex-1 overflow-hidden">
+            <div id="sidebar-slider" class="absolute inset-0 flex transition-transform duration-300 ease-in-out">
+
+              <!-- Nível 1: The Hub (Theme Cards) -->
+              <div id="sidebar-level-1" class="w-full flex-shrink-0 h-full overflow-y-auto space-y-4 pb-10">
+                <!-- Cards Populated by JS -->
+              </div>
+
+              <!-- Nível 2: Detailed List -->
+              <div id="sidebar-level-2" class="w-full flex-shrink-0 h-full overflow-y-auto flex flex-col bg-white dark:bg-slate-900 absolute left-full top-0">
+
+                <!-- Level 2 Header -->
+                <div class="relative h-32 flex-shrink-0 overflow-hidden rounded-t-xl group">
+                  <div id="lvl2-cover" class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"></div>
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+
+                  <button onclick="backToLevel1()" class="absolute top-3 left-3 flex items-center justify-center w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                  </button>
+
+                  <div class="absolute bottom-3 left-4 right-4">
+                    <h3 id="lvl2-title" class="font-cinzel font-bold text-lg text-white drop-shadow-md">Título do Tema</h3>
+                    <p id="lvl2-count" class="text-xs text-slate-300 font-medium tracking-wide">0 itens</p>
+                  </div>
+                </div>
+
+                <!-- Level 2 Search -->
+                <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+                  <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+                    <input type="text" id="lvl2-search" onkeyup="handleLevel2Search()" placeholder="Buscar neste tema..." class="w-full bg-slate-100 dark:bg-slate-800 border-none text-xs text-slate-900 dark:text-white rounded-lg pl-9 pr-3 py-2.5 focus:ring-1 focus:ring-marian-500 transition-shadow">
+                  </div>
+                </div>
+
+                <!-- Level 2 Items List -->
+                <div id="sidebar-level-2-items" class="flex-1 overflow-y-auto p-4 space-y-3 pb-10">
+                   <!-- Populated by JS -->
+                </div>
+              </div>
+
+            </div>
           </div>
 
-          <div id="sidebar-content" class="space-y-6 text-sm flex-1 pb-10">
-            <!-- Populated by JS -->
-          </div>
         </div>
       </aside>
 

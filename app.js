@@ -23,7 +23,7 @@ async function init() {
     document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
   }
 
-  renderSidebar();
+  renderSidebarLevel1();
   loadDailyLiturgy();
   initThreeAmbient();
   lucide.createIcons();
@@ -57,39 +57,173 @@ async function enterPortal() {
   }
 }
 
-function renderSidebar() {
-  const container = document.getElementById('sidebar-content');
+const sidebarGroups = {
+  eras_historicas: {
+    icon: 'clock',
+    title: 'Eras Históricas',
+    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/The_delivery_of_the_keys_to_Saint_Peter_by_Pietro_Perugino.jpg/800px-The_delivery_of_the_keys_to_Saint_Peter_by_Pietro_Perugino.jpg',
+    tag: 'Séc. I ao XXI'
+  },
+  estudos_biblicos: {
+    icon: 'book-open',
+    title: 'Estudos Bíblicos',
+    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gutenberg_Bible_B42_Deutsches_Buch_und_Schriftmuseum.jpg/800px-Gutenberg_Bible_B42_Deutsches_Buch_und_Schriftmuseum.jpg',
+    tag: 'Sagradas Escrituras'
+  },
+  doutores_santos: {
+    icon: 'crown',
+    title: 'Doutores & Santos',
+    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg/800px-Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg',
+    tag: 'Mestres da Fé'
+  },
+  milagres_reliquias: {
+    icon: 'sparkles',
+    title: 'Milagres & Relíquias',
+    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Lanciano_Reliquary.jpg/800px-Lanciano_Reliquary.jpg',
+    tag: 'Sobrenatural'
+  },
+  paroquias_rotas: {
+    icon: 'map-pin',
+    title: 'Paróquias & Rotas',
+    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/1570_Ortelius_Map_of_the_World_-_Typus_Orbis_Terrarum_-_Geographicus_-_World-ortelius-1570.jpg/800px-1570_Ortelius_Map_of_the_World_-_Typus_Orbis_Terrarum_-_Geographicus_-_World-ortelius-1570.jpg',
+    tag: 'Geografia Sagrada'
+  }
+};
+
+let currentLevel2Group = null;
+
+function renderSidebarLevel1() {
+  const container = document.getElementById('sidebar-level-1');
   let html = '';
 
-  const groups = {
-    historia: { icon: 'clock', title: 'Eras Históricas', items: ['era1', 'era2'] },
-    biblia: { icon: 'book-open', title: 'Estudos Bíblicos', items: ['biblia1'] },
-    livros: { icon: 'library', title: 'Mestres', items: ['livro1'] },
-    sobrenatural: { icon: 'sparkles', title: 'Milagres', items: ['milagre1'] }
-  };
+  for (let [key, group] of Object.entries(sidebarGroups)) {
+    // Determine items for this group
+    const itemsCount = Object.values(dataModules).filter(item => item.category === key).length;
 
-  for(let [key, group] of Object.entries(groups)) {
-    html += `<div class="sidebar-group" data-group="${key}">
-      <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center space-x-1">
-        <i data-lucide="${group.icon}" class="w-3.5 h-3.5 text-marian-600 dark:text-gold-400"></i>
-        <span>${group.title}</span>
-      </h3><ul class="space-y-1">`;
+    html += `
+      <div class="sidebar-group cursor-pointer group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all duration-300"
+           data-group="${key}"
+           onclick="openSidebarLevel2('${key}')">
 
-    group.items.forEach(itemId => {
-      const item = dataModules[itemId];
-      if(!item) return;
-      html += `<li>
-        <button onmouseenter="window.previewSidebarItem('${itemId}')" onclick="window.loadFullContent('${itemId}')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center justify-between group">
-          <span class="font-medium text-slate-700 dark:text-slate-300 group-hover:text-marian-900 dark:group-hover:text-white">${item.title}</span>
-          <i data-lucide="chevron-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-marian-600 dark:text-gold-400"></i>
-        </button>
-      </li>`;
-    });
-    html += `</ul></div>`;
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${group.bgImage}')"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/20 group-hover:via-slate-900/40 transition-colors"></div>
+
+        <!-- Border Glow Effect -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 border-2 border-gold-400/50 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
+
+        <!-- Content -->
+        <div class="relative z-10 p-4 h-32 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-black/40 text-gold-400 backdrop-blur-md border border-white/10">
+              ${group.tag}
+            </span>
+            <i data-lucide="${group.icon}" class="w-5 h-5 text-white/70 group-hover:text-gold-400 transition-colors"></i>
+          </div>
+
+          <div>
+            <h3 class="font-cinzel font-bold text-lg text-white group-hover:text-gold-200 transition-colors drop-shadow-md">${group.title}</h3>
+            <p class="text-xs text-slate-300 font-medium">${itemsCount} Registros</p>
+          </div>
+        </div>
+      </div>
+    `;
   }
   container.innerHTML = html;
   lucide.createIcons();
 }
+
+function openSidebarLevel2(groupKey) {
+  const group = sidebarGroups[groupKey];
+  if (!group) return;
+
+  currentLevel2Group = groupKey;
+
+  // Header
+  document.getElementById('lvl2-cover').style.backgroundImage = `url('${group.bgImage}')`;
+  document.getElementById('lvl2-title').innerText = group.title;
+
+  const items = Object.entries(dataModules).filter(([id, item]) => item.category === groupKey);
+  document.getElementById('lvl2-count').innerText = `${items.length} itens`;
+
+  // Search Reset
+  document.getElementById('lvl2-search').value = '';
+
+  renderSidebarLevel2Items(items);
+
+  // Transition slider
+  document.getElementById('sidebar-slider').classList.add('-translate-x-full');
+
+  // Specific interaction: load map immediately if Paróquias & Rotas is clicked
+  if (groupKey === 'paroquias_rotas') {
+    hideAllStages();
+    const stage = document.getElementById('content-stage');
+    stage.classList.remove('hidden');
+    // We can initialize an empty or default map for Paróquias & Rotas
+    // or call initLeafletMap with default world coordinates
+    setTimeout(() => initLeafletMap([41.9028, 12.4964], 2, []), 100);
+  }
+}
+
+function backToLevel1() {
+  document.getElementById('sidebar-slider').classList.remove('-translate-x-full');
+  currentLevel2Group = null;
+}
+
+function renderSidebarLevel2Items(itemsEntries) {
+  const container = document.getElementById('sidebar-level-2-items');
+
+  if (itemsEntries.length === 0) {
+    container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Nenhum item encontrado.</p>';
+    lucide.createIcons();
+    return;
+  }
+
+  let html = itemsEntries.map(([id, item]) => {
+    const hasAudio = false; // Mock for now, could be added to data
+    const hasMap = item.mapCenter && item.mapCenter.length > 0;
+
+    return `
+    <button onmouseenter="window.previewSidebarItem('${id}')" onclick="window.loadFullContent('${id}')" class="w-full text-left p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/80 transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-600 group flex items-start gap-3">
+      <!-- Avatar -->
+      <div class="w-10 h-10 rounded-full flex-shrink-0 bg-slate-200 dark:bg-slate-700 overflow-hidden border border-slate-300 dark:border-slate-600">
+        ${item.avatar ? `<img src="${item.avatar}" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-4 h-4 text-slate-400"></i></div>`}
+      </div>
+
+      <!-- Text -->
+      <div class="flex-1 min-w-0">
+        <h4 class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors truncate">${item.title}</h4>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">${item.description}</p>
+
+        <!-- Media Indicators -->
+        <div class="flex items-center gap-2 mt-1.5 opacity-60">
+          ${hasMap ? '<i data-lucide="map-pin" class="w-3 h-3 text-sacred-600 dark:text-rose-400"></i>' : ''}
+          <i data-lucide="file-text" class="w-3 h-3 text-slate-500"></i>
+        </div>
+      </div>
+    </button>
+  `}).join('');
+
+  container.innerHTML = html;
+  lucide.createIcons();
+}
+
+function handleLevel2Search() {
+  const query = document.getElementById('lvl2-search').value.toLowerCase();
+
+  if (!currentLevel2Group) return;
+
+  const items = Object.entries(dataModules).filter(([id, item]) => {
+    if (item.category !== currentLevel2Group) return false;
+
+    return item.title.toLowerCase().includes(query) ||
+           item.description.toLowerCase().includes(query) ||
+           (item.saints && item.saints.some(s => s.name.toLowerCase().includes(query)));
+  });
+
+  renderSidebarLevel2Items(items);
+}
+
 
 async function toggleAudio() {
   const btn = document.getElementById('btn-audio');
@@ -142,7 +276,7 @@ function previewSidebarItem(key) {
   document.getElementById('preview-title').innerText = item.title;
   document.getElementById('preview-description').innerText = item.description;
   document.getElementById('preview-highlights').innerText = item.highlights;
-  document.getElementById('preview-saints-summary').innerText = item.saints.map(s=>s.name).join(', ');
+  document.getElementById('preview-saints-summary').innerText = (item.saints || []).map(s=>s.name).join(', ');
   document.getElementById('preview-cta-btn').onclick = () => window.loadFullContent(key);
 
   updateParticleColor(item.color);
@@ -169,7 +303,7 @@ function loadFullContent(key) {
   document.getElementById('content-secular').innerText = item.secular;
 
   const saintsContainer = document.getElementById('content-saints');
-  saintsContainer.innerHTML = item.saints.map(s => `
+  saintsContainer.innerHTML = (item.saints || []).map(s => `
     <div class="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
       <div class="font-bold text-xs text-slate-800 dark:text-slate-200">${s.name}</div>
       <div class="text-[11px] text-marian-700 dark:text-gold-400 font-medium">${s.role}</div>
@@ -178,7 +312,13 @@ function loadFullContent(key) {
   `).join('');
 
   updateParticleColor(item.color);
-  setTimeout(() => initLeafletMap(item.mapCenter, item.mapZoom, item.markers), 100);
+
+  // Map interaction logic: Only load map stage if category is paroquias_rotas or it has map coordinates.
+  const hasMap = item.mapCenter && item.mapCenter.length > 0;
+  if (item.category === 'paroquias_rotas' || hasMap) {
+      setTimeout(() => initLeafletMap(item.mapCenter, item.mapZoom, item.markers), 100);
+      // Wait to not conflict with map animations
+  }
 
   if(window.innerWidth < 1024 && sidebarOpen) toggleSidebar();
 }
@@ -215,7 +355,7 @@ function handleSearch() {
   const results = Object.entries(dataModules).filter(([key, item]) => {
     return item.title.toLowerCase().includes(query) ||
            item.description.toLowerCase().includes(query) ||
-           item.saints.some(s => s.name.toLowerCase().includes(query));
+           (item.saints && item.saints.some(s => s.name.toLowerCase().includes(query)));
   });
 
   if (results.length === 0) {
@@ -355,5 +495,8 @@ window.loadFullContent = loadFullContent;
 window.closeModal = closeModal;
 window.handleSearch = handleSearch;
 window.findNearbyChurches = findNearbyChurches;
+window.openSidebarLevel2 = openSidebarLevel2;
+window.backToLevel1 = backToLevel1;
+window.handleLevel2Search = handleLevel2Search;
 
 window.onload = init;
