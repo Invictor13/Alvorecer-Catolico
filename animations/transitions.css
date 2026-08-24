@@ -47,3 +47,61 @@
       transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .modal-overlay.active .modal-content { transform: scale(1); }
+
+    /* Splash Screen Animations */
+    .animate-halo-expand {
+      animation: haloExpand 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes haloExpand {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 0.8; transform: scale(1); }
+    }
+
+    .splash-card {
+      animation: cardEnter 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
+    }
+
+    @keyframes cardEnter {
+      0% { opacity: 0; transform: scale(0.95); filter: blur(10px); }
+      100% { opacity: 1; transform: scale(1); filter: blur(0px); }
+    }
+
+    .splash-item {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: itemFadeUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    /* Staggering the child elements inside splash-card */
+    .splash-card > .splash-item:nth-child(2) { animation-delay: 0.6s; }
+    .splash-card > .splash-item:nth-child(3) { animation-delay: 0.8s; }
+    .splash-card > .splash-item:nth-child(4) { animation-delay: 1.0s; }
+    .splash-card > .splash-item:nth-child(5) { animation-delay: 1.2s; }
+    .splash-card > .splash-item:nth-child(6) { animation-delay: 1.4s; }
+    .splash-card > .splash-item:nth-child(7) { animation-delay: 1.6s; }
+    .splash-card > .splash-item:nth-child(8) { animation-delay: 1.8s; }
+
+    @keyframes itemFadeUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-gold-shimmer {
+      background-size: 200% auto;
+      animation: goldShimmer 3s linear infinite;
+    }
+
+    @keyframes goldShimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .animate-btn-glare {
+      animation: btnGlare 4s linear infinite;
+    }
+
+    @keyframes btnGlare {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }

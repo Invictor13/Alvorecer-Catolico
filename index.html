@@ -41,75 +41,79 @@
   >
     <div
       id="splash-screen"
-      class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center transition-all duration-[800ms] ease-in-out"
+      class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-all duration-[700ms] ease-out"
     >
-      <!-- Central Gold Halo -->
+      <!-- Halo de Luz de Fundo (Âmbar/Dourada) -->
       <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div class="w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-full bg-gold-500/20 blur-[100px] animate-halo-pulse"></div>
+        <div class="w-[400px] h-[400px] sm:w-[700px] sm:h-[700px] rounded-full bg-amber-600/30 blur-[120px] opacity-0 animate-halo-expand"></div>
       </div>
 
+      <!-- Card Central -->
       <div
-        class="relative z-10 text-center px-6 py-10 max-w-2xl mx-auto flex flex-col items-center space-y-6 sm:space-y-8 rounded-2xl border border-gold-600/20 bg-black/40 shadow-2xl backdrop-blur-sm"
+        class="splash-card relative z-10 text-center px-6 py-10 sm:px-10 sm:py-12 max-w-3xl mx-auto flex flex-col items-center space-y-7 rounded-2xl border border-gold-500/40 bg-stone-950/85 backdrop-blur-2xl shadow-[0_0_50px_rgba(212,175,55,0.15)] opacity-0 scale-95"
       >
-        <!-- Símbolo de Abertura -->
-        <div
-          class="text-gold-500/80 mb-2 animate-scale-fade text-3xl sm:text-4xl"
-        >
-          ✠
+        <!-- Borda dupla decorativa -->
+        <div class="absolute inset-[6px] border border-gold-500/10 rounded-xl pointer-events-none"></div>
+
+        <!-- Badge de Gratuidade -->
+        <div class="splash-item opacity-0">
+          <span class="inline-flex items-center px-4 py-1.5 rounded-full border border-amber-500/40 bg-amber-950/40 text-amber-300 text-[10px] sm:text-xs font-bold tracking-widest uppercase">
+            Iniciativa 100% Gratuita • Revolução Digital Católica
+          </span>
         </div>
 
-        <!-- Título de Impacto -->
+        <!-- Título Principal -->
         <h1
-          class="font-cinzel text-3xl sm:text-5xl lg:text-6xl font-bold bg-[length:200%_auto] bg-gradient-to-r from-yellow-100 via-gold-400 to-yellow-100 bg-clip-text text-transparent animate-shine tracking-wide opacity-0 animate-scale-fade delay-300"
+          class="splash-item opacity-0 font-cinzel text-4xl sm:text-5xl lg:text-6xl font-black bg-[length:200%_auto] bg-gradient-to-r from-yellow-200 via-gold-400 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] tracking-wide pt-2 pb-1"
         >
           Alvorecer Católico
         </h1>
 
-        <!-- Lema Espiritual -->
+        <!-- Epígrafe Bíblica -->
         <p
-            class="font-garamond italic text-lg sm:text-2xl text-yellow-100/90 leading-relaxed opacity-0 animate-slide-up-slow delay-[900ms] px-4"
+          class="splash-item opacity-0 font-garamond italic text-lg sm:text-2xl text-yellow-100/90 leading-relaxed px-4 drop-shadow-md"
         >
-            “A luz resplandece nas trevas”
+          “A luz resplandece nas trevas, e as trevas não a derrotaram.” <span class="text-sm sm:text-base text-yellow-100/70 not-italic ml-1">(Jo 1, 5)</span>
         </p>
 
-        <!-- Divisor Secundário -->
-        <div class="w-full flex items-center justify-center opacity-0 animate-fade-in delay-[1200ms]">
-            <div class="w-16 h-px bg-gradient-to-r from-transparent via-gold-700/50 to-transparent"></div>
+        <!-- Divisor -->
+        <div class="splash-item opacity-0 w-full flex items-center justify-center py-2">
+            <div class="w-32 h-px bg-gradient-to-r from-transparent via-gold-600/70 to-transparent"></div>
         </div>
 
-        <!-- Mensagem de Boas-Vindas -->
-        <div class="space-y-4 max-w-lg opacity-0 animate-slide-up-slow delay-[1500ms] px-2">
+        <!-- Manifesto -->
+        <div class="splash-item opacity-0 max-w-2xl px-2">
           <p
-            class="font-garamond text-base sm:text-xl text-slate-300 leading-relaxed"
+            class="font-garamond text-base sm:text-xl text-slate-200 leading-relaxed drop-shadow-sm"
           >
-            Uma enciclopédia visual e interativa que conecta a linha do tempo, o mapa histórico e o legado doutrinal de 2.000 anos da Igreja.
+            Um resgate monumental e interativo dos 2.000 anos de História, Magistério e Tradição da Santa Igreja Católica. Do sangue dos mártires à era digital, toda a riqueza da Fé ao alcance de todos.
           </p>
         </div>
 
-        <!-- Assinatura de Autoria -->
+        <!-- Crédito e Autoria -->
         <div
-          class="flex flex-col items-center opacity-0 animate-slide-up-slow delay-[1800ms] mt-4"
+          class="splash-item opacity-0 flex flex-col items-center mt-4"
         >
           <p
-            class="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-gold-600/60 mb-1.5"
+            class="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] font-semibold text-gold-600/80 mb-1.5"
           >
-            Produzido por
+            Produzido e Idealizado por
           </p>
           <p
-            class="font-cinzel font-bold text-gold-500/80 text-xs sm:text-sm tracking-widest"
+            class="font-cinzel font-black text-gold-400 text-sm sm:text-base tracking-[0.3em] uppercase drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
           >
             Victor Ladislau Viana
           </p>
         </div>
 
         <!-- Botão de Entrada -->
-        <div class="pt-6 opacity-0 animate-fade-in delay-[2200ms]">
+        <div class="splash-item opacity-0 pt-6 w-full flex justify-center">
             <button
                 onclick="enterPortal()"
-                class="px-8 py-3 rounded-full bg-transparent border border-gold-500/40 text-gold-400 font-cinzel font-bold uppercase tracking-widest text-sm hover:bg-gold-900/30 hover:border-gold-400 transition-all duration-500 relative overflow-hidden group shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_25px_rgba(245,158,11,0.2)]"
+                class="px-10 py-4 rounded-full bg-gradient-to-b from-yellow-500 to-gold-600 text-stone-950 font-cinzel font-black uppercase tracking-[0.2em] text-sm hover:scale-105 transition-all duration-300 relative overflow-hidden shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:shadow-[0_0_40px_rgba(212,175,55,0.7)] animate-gold-shimmer flex items-center gap-3"
             >
-                <div class="absolute inset-0 w-full h-full bg-[linear-gradient(110deg,transparent,25%,rgba(245,158,11,0.2),50%,transparent,75%,rgba(245,158,11,0.2),100%)] bg-[length:200%_100%] animate-shimmer-btn opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <span class="relative z-10 flex items-center gap-2">Adentrar o Portal <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+                <div class="absolute inset-0 w-full h-full bg-[linear-gradient(90deg,transparent,25%,rgba(255,255,255,0.4),50%,transparent,75%,rgba(255,255,255,0.4),100%)] bg-[length:200%_100%] animate-btn-glare opacity-100"></div>
+                <span class="relative z-10 flex items-center gap-2 drop-shadow-md">Adentrar o Portal <span class="text-lg">✠</span></span>
             </button>
         </div>
       </div>

@@ -31,6 +31,7 @@ async function init() {
 
 async function enterPortal() {
   const splash = document.getElementById('splash-screen');
+  const splashCard = splash.querySelector('.splash-card');
   const ambientCanvas = document.getElementById('ambient-canvas');
 
   // Trigger Sound Effect via Tone.js Context without background loop
@@ -44,6 +45,11 @@ async function enterPortal() {
   synth.triggerAttackRelease(["C3", "C4"], "2n");
 
   // Animate Splash Out and Canvas Expand
+  if (splashCard) {
+    splashCard.classList.add('scale-105');
+  }
+  splash.classList.add('opacity-0', 'pointer-events-none');
+
   if (ambientCanvas) {
     ambientCanvas.style.transition = 'transform 3s cubic-bezier(0.16, 1, 0.3, 1)';
     ambientCanvas.style.transform = 'scale(1.05)';
