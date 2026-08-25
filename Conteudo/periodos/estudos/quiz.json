@@ -1,0 +1,46 @@
+[
+  {
+    "question": "Em que ano ocorreu o evento de Pentecostes, considerado a manifestação pública do nascimento da Igreja Católica?",
+    "options": [
+      "33 d.C.",
+      "313 d.C.",
+      "325 d.C.",
+      "1054 d.C."
+    ],
+    "answer": 0,
+    "explanation": "O Pentecostes ocorreu no ano 33 d.C. em Jerusalém, quando o Espírito Santo desceu sobre os Apóstolos no Cenáculo (CIC § 767)."
+  },
+  {
+    "question": "Qual foi o primeiro Concílio Ecumênico da História da Igreja que formulou o Credo sobre a divindade de Cristo?",
+    "options": [
+      "Concílio de Trento",
+      "I Concílio de Niceia",
+      "Concílio de Calcedônia",
+      "Vaticano II"
+    ],
+    "answer": 1,
+    "explanation": "O I Concílio de Niceia (325 d.C.) proclamou que Jesus é consubstancial (Homoousios) ao Pai, derrotando o arianismo (CIC § 242)."
+  },
+  {
+    "question": "Onde São Bento fundou o mosteiro do qual emanou a Santa Regra 'Ora et Labora'?",
+    "options": [
+      "Assis",
+      "Monte Cassino",
+      "Paris",
+      "Roma"
+    ],
+    "answer": 1,
+    "explanation": "São Bento fundou o Mosteiro de Monte Cassino na Itália por volta de 529 d.C., salvando a cultura do Ocidente (CIC § 918)."
+  },
+  {
+    "question": "Qual grande doutor da Igreja escreveu a monumental 'Suma Teológica', harmonizando Fé e Razão?",
+    "options": [
+      "Santo Agostinho",
+      "São Tomás de Aquino",
+      "São Francisco",
+      "Santo Inácio"
+    ],
+    "answer": 1,
+    "explanation": "São Tomás de Aquino (O Doutor Angélico) escreveu a Suma Teológica no século XIII, sendo a pauta doutrinária suprema da Igreja (CIC § 39)."
+  }
+]

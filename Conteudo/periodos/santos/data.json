@@ -1,0 +1,89 @@
+[
+  {
+    "id": 1,
+    "year": "354 - 430 d.C.",
+    "century": "antiga",
+    "title": "Santo Agostinho de Hipona",
+    "era": "Doutor da Graça",
+    "ccc": "CIC § 385",
+    "region": "Hipona, Argélia",
+    "coords": [
+      36.9,
+      7.7667
+    ],
+    "zoom": 5,
+    "overview": "Bispo e Doutor da Igreja. Escreveu 'Confissões' e 'A Cidade de Deus', moldando para sempre a teologia ocidental.",
+    "theology": "A absoluta necessidade da Graça divina para a salvação e superação do pecado original.",
+    "quote": "«Fizeste-nos, Senhor, para Ti, e o nosso coração permanece inquieto enquanto não descansar em Ti.»",
+    "figures": "Santo Agostinho, Santa Mônica, Santo Ambrósio de Milão.",
+    "artTitle": "Santo Agostinho no seu Estúdio por Botticelli",
+    "artDesc": "Retrato renascentista clássico representando a reflexão teológica augustiniana.",
+    "routes": []
+  },
+  {
+    "id": 2,
+    "year": "1491 - 1556 d.C.",
+    "century": "moderna",
+    "title": "Santo Inácio de Loyola",
+    "era": "Companhia de Jesus",
+    "ccc": "CIC § 2015",
+    "region": "Manresa & Roma",
+    "coords": [
+      41.5983,
+      1.8301
+    ],
+    "zoom": 6,
+    "overview": "Fundador dos Jesuítas e autor dos 'Exercícios Espirituais'. Batalhador do Rei Eterno na expansão missionária.",
+    "theology": "Contemplação na ação e busca permanente da Maior Glória de Deus (Ad Maiorem Dei Gloriam).",
+    "quote": "«Em tudo amar e servir a Sua Divina Majestade.» — Santo Inácio de Loyola",
+    "figures": "Santo Inácio, São Francisco Xavier, São Pedro Fabro.",
+    "artTitle": "Cova de Manresa & Igreja do Gesù",
+    "artDesc": "Arte barroca glorificando a transverberação e envio dos Jesuítas.",
+    "routes": [
+      {
+        "from": [
+          41.5983,
+          1.8301
+        ],
+        "to": [
+          41.9028,
+          12.4964
+        ],
+        "label": "Aprovação Papal da Ordem"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "year": "1920 - 2005 d.C.",
+    "century": "contemporanea",
+    "title": "São João Paulo II",
+    "era": "Papa Magno",
+    "ccc": "CIC § 221",
+    "region": "Wadowice & Roma",
+    "coords": [
+      49.8833,
+      19.4833
+    ],
+    "zoom": 5,
+    "overview": "Um dos maiores papas da história humana. Visitou 129 países, fundou a JMJ e ajudou a derrubar o comunismo ateu.",
+    "theology": "Teologia do Corpo, Evangelium Vitae e a Divina Misericórdia de Jesus.",
+    "quote": "«Não tenhais medo! Abri, melhor, escancarai as portas a Cristo!» — São João Paulo II",
+    "figures": "São João Paulo II, Santa Faustina Kowalska, Cardeal Ratzinger.",
+    "artTitle": "Basílica de São Pedro & Santuário da Divina Misericórdia",
+    "artDesc": "Fotografias do Pontificado do Grande Papa da Família.",
+    "routes": [
+      {
+        "from": [
+          49.8833,
+          19.4833
+        ],
+        "to": [
+          41.9029,
+          12.4534
+        ],
+        "label": "Sua Eleição Papal em 1978"
+      }
+    ]
+  }
+]
