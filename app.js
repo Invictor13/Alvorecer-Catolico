@@ -43,7 +43,8 @@ function triggerRipple() {
   const ripple = document.createElement('div');
   ripple.className = 'water-ripple';
   rippleLayer.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 1600);
+  // Match removal with the new 3.5s animation duration from CSS
+  setTimeout(() => ripple.remove(), 3600);
 }
 
 function runIntroSequence() {
