@@ -1,30 +1,38 @@
-127.0.0.1 - - [25/Aug/2026 13:26:08] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:08] "GET /app.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:08] "GET /animations/transitions.css HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:08] "GET /tailwind-config.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:10] "GET /modos/mapa-mundi/mapa.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:10] "GET /animations/particles-sacro.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:10] "GET /modos/paroquias/paroquias.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:10] "GET /modos/linha-do-tempo/timeline.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:11] "GET /Conteudo/periodos/modules.json HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:11] "GET /Conteudo/periodos/eras.json HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:53] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:53] "GET /animations/transitions.css HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:54] "GET /tailwind-config.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:54] "GET /app.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:54] "GET /animations/particles-sacro.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:54] "GET /modos/mapa-mundi/mapa.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:54] "GET /modos/linha-do-tempo/timeline.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:54] "GET /modos/paroquias/paroquias.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:55] "GET /Conteudo/periodos/modules.json HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:26:55] "GET /Conteudo/periodos/eras.json HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:17] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:17] "GET /animations/transitions.css HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:17] "GET /tailwind-config.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:17] "GET /app.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:18] "GET /animations/particles-sacro.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:18] "GET /modos/mapa-mundi/mapa.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:18] "GET /modos/linha-do-tempo/timeline.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:18] "GET /modos/paroquias/paroquias.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:18] "GET /Conteudo/periodos/modules.json HTTP/1.1" 200 -
-127.0.0.1 - - [25/Aug/2026 13:27:18] "GET /Conteudo/periodos/eras.json HTTP/1.1" 200 -
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 1329, in <module>
+    test(
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 1276, in test
+    with ServerClass(addr, HandlerClass) as httpd:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/socketserver.py", line 457, in __init__
+    self.server_bind()
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 1323, in server_bind
+    return super().server_bind()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 140, in server_bind
+    socketserver.TCPServer.server_bind(self)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/socketserver.py", line 478, in server_bind
+    self.socket.bind(self.server_address)
+OSError: [Errno 98] Address already in use
+127.0.0.1 - - [25/Aug/2026 16:36:30] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:30] "GET /animations/transitions.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:30] "GET /tailwind-config.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:30] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:31] "GET /animations/particles-sacro.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:31] "GET /modos/mapa-mundi/mapa.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:31] "GET /modos/linha-do-tempo/timeline.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:31] "GET /modos/paroquias/paroquias.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:31] "GET /Conteudo/periodos/modules.json HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:36:31] "GET /Conteudo/periodos/eras.json HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:30] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:30] "GET /animations/transitions.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:30] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:30] "GET /tailwind-config.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:31] "GET /animations/particles-sacro.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:31] "GET /modos/paroquias/paroquias.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:31] "GET /modos/linha-do-tempo/timeline.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:31] "GET /modos/mapa-mundi/mapa.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:31] "GET /Conteudo/periodos/modules.json HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2026 16:37:31] "GET /Conteudo/periodos/eras.json HTTP/1.1" 200 -

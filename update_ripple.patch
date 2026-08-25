@@ -1,0 +1,59 @@
+<<<<<<< SEARCH
+    .water-ripple {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(212, 175, 55, 0.4);
+      border-radius: 50%;
+      animation: rippleEffect 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes rippleEffect {
+      0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+      }
+      100% {
+        width: 250vw;
+        height: 250vw;
+        opacity: 0;
+        filter: blur(4px);
+      }
+    }
+=======
+    .water-ripple {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
+      border: 2px solid rgba(212, 175, 55, 0.6);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.2);
+      animation: rippleEffect 3s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes rippleEffect {
+      0% {
+        width: 0;
+        height: 0;
+        opacity: 0.8;
+        border-width: 3px;
+      }
+      50% {
+        opacity: 0.4;
+      }
+      100% {
+        width: 150vw;
+        height: 150vw;
+        opacity: 0;
+        border-width: 0px;
+        filter: blur(8px);
+      }
+    }
+>>>>>>> REPLACE
