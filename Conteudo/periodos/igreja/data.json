@@ -1,0 +1,407 @@
+[
+  {
+    "id": 1,
+    "year": "33 d.C.",
+    "century": "antiga",
+    "title": "Pentecostes e Jerusalém",
+    "era": "Era Apostólica",
+    "ccc": "CIC § 767",
+    "region": "Jerusalém, Judeia",
+    "coords": [
+      31.7683,
+      35.2137
+    ],
+    "zoom": 7,
+    "overview": "Descida do Espírito Santo sobre Maria Santíssima e os Apóstolos no Cenáculo (Atos 2). Jerusalém torna-se a matriz maternal da Santa Igreja universal.",
+    "theology": "Fundação pneumatológica da Igreja. A graça batismal e a efusão do Espírito Santo inauguram a Grande Comissão aos povos.",
+    "quote": "«Recebereis a força do Espírito Santo que virá sobre vós, e sereis minhas testemunhas em Jerusalém e até aos confins da terra.» — Atos 1, 8",
+    "figures": "São Pedro, Nossa Senhora, São Tiago Menor, São João.",
+    "artTitle": "O Pentecostes de Tiziano & Catacumbas Romanas",
+    "artDesc": "Afrescos paleocristãos do Bom Pastor nas Catacumbas de Priscila e o Mosaico de Jerusalém.",
+    "routes": []
+  },
+  {
+    "id": 2,
+    "year": "49 d.C.",
+    "century": "antiga",
+    "title": "Concílio de Jerusalém",
+    "era": "Expansão Primitiva",
+    "ccc": "CIC § 874",
+    "region": "Antioquia e Jerusalém",
+    "coords": [
+      36.2021,
+      36.16
+    ],
+    "zoom": 6,
+    "overview": "Primeira assembleia decisória da Igreja. Define que os gentios convertidos não necessitam da circuncisão ritual judaica.",
+    "theology": "Universatilidade soteriológica. A Graça divina redentora superou a vigência das leis rituais da Antiga Aliança.",
+    "quote": "«Acreditamos que somos salvos pela graça do Senhor Jesus, do mesmo modo que eles.» — Atos 15, 11",
+    "figures": "São Paulo, São Pedro, São Barnabé.",
+    "artTitle": "São Paulo Pregando aos Gentios",
+    "artDesc": "Ilustrações de manuscritos sírios e Bizantinos medievais.",
+    "routes": [
+      {
+        "from": [
+          31.7683,
+          35.2137
+        ],
+        "to": [
+          36.2021,
+          36.16
+        ],
+        "label": "Viagem Apostólica de Paulo e Pedro"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "year": "64 - 313 d.C.",
+    "century": "antiga",
+    "title": "Era dos Mártires e Catacumbas",
+    "era": "Perseguições Império",
+    "ccc": "CIC § 2473",
+    "region": "Roma, Itália",
+    "coords": [
+      41.9028,
+      12.4964
+    ],
+    "zoom": 6,
+    "overview": "Perseguições imperiais sob Nero até Diocleciano. O sangue dos mártires rega a terra e multiplica o número de cristãos.",
+    "theology": "Testemunho supremo de fé (martyrion). Configuração perfeita a Cristo crucificado na doação da própria vida.",
+    "quote": "«Sanguis martyrum semen christianorum» (O sangue dos mártires é semente de novos cristãos). — Tertuliano",
+    "figures": "São Pedro, São Paulo, Santa Inês, São Lourenço, São Inácio de Antioquia.",
+    "artTitle": "Catacumbas de São Calisto",
+    "artDesc": "Símbolos paleocristãos: O Peixe (ICHTHYS), a Âncora e o Pavão real.",
+    "routes": [
+      {
+        "from": [
+          36.2021,
+          36.16
+        ],
+        "to": [
+          41.9028,
+          12.4964
+        ],
+        "label": "Martírio dos Apóstolos em Roma"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "year": "313 d.C.",
+    "century": "antiga",
+    "title": "Édito de Milão",
+    "era": "Igreja Imperial",
+    "ccc": "CIC § 2104",
+    "region": "Milão, Itália",
+    "coords": [
+      45.4642,
+      9.19
+    ],
+    "zoom": 6,
+    "overview": "Constantino e Licínio promulgam a liberdade religiosa. Fim das perseguições imperiais e início do culto público ostensivo.",
+    "theology": "Reconhecimento da dignidade da consciência humana e edificação das Basílicas Patriarcais.",
+    "quote": "«Concedemos aos cristãos e a todos os outros a livre faculdade de seguir a religião que quisessem.» — Édito de Milão",
+    "figures": "Imperador Constantino, Santa Helena, Papa Silvestre I.",
+    "artTitle": "Mosaico do Chi-Rho Imperial",
+    "artDesc": "Monograma Constantiniano do Labarum nas Basílicas de Roma e Constantinopla.",
+    "routes": [
+      {
+        "from": [
+          41.9028,
+          12.4964
+        ],
+        "to": [
+          45.4642,
+          9.19
+        ],
+        "label": "Decreto Imperial de Liberação"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "year": "325 d.C.",
+    "century": "antiga",
+    "title": "I Concílio de Niceia",
+    "era": "Patrística",
+    "ccc": "CIC § 242",
+    "region": "Niceia, Bitínia (Turquia)",
+    "coords": [
+      40.4287,
+      29.7214
+    ],
+    "zoom": 6,
+    "overview": "Primeiro Concílio Ecumênico. Condenação solene da heresia de Ário e formulação dogmática do Credo Niceno.",
+    "theology": "Consubstancialidade divina do Filho com o Pai (Homoousios). Cristo é Deus verdadeiro de Deus verdadeiro.",
+    "quote": "«Deus de Deus, Luz da Luz, Deus verdadeiro de Deus verdadeiro, gerado, não criado, consubstancial ao Pai.» — Credo Niceno",
+    "figures": "Santo Atanásio de Alexandria, Bispo Hosius, São Nicolau.",
+    "artTitle": "Ícone dos 318 Padres Conciliares",
+    "artDesc": "Iconografia ortodoxa clássica representando o Tomo do Credo Niceno.",
+    "routes": [
+      {
+        "from": [
+          45.4642,
+          9.19
+        ],
+        "to": [
+          40.4287,
+          29.7214
+        ],
+        "label": "Assembleia Episcopal Bispos"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "year": "529 d.C.",
+    "century": "media",
+    "title": "Fundação de Monte Cassino",
+    "era": "Monacato Ocidental",
+    "ccc": "CIC § 918",
+    "region": "Monte Cassino, Itália",
+    "coords": [
+      41.4883,
+      13.8167
+    ],
+    "zoom": 7,
+    "overview": "São Bento funda o mosteiro ápice da civilização cristã e redige a Santa Regra 'Ora et Labora' (Oração e Trabalho).",
+    "theology": "Consagração monástica e preservação da Bíblia e cultura greco-romana pelos Scriptoriums.",
+    "quote": "«Nihil Operi Dei praeponatur» (Nada se anteponha ao Serviço de Deus). — Regra de São Bento",
+    "figures": "São Bento de Núrsia, Santa Escolástica.",
+    "artTitle": "Manuscritos Iluminados Beneditinos",
+    "artDesc": "Códices e bíblias ornamentadas com iluminuras em ouro e lápis-lazúli.",
+    "routes": [
+      {
+        "from": [
+          40.4287,
+          29.7214
+        ],
+        "to": [
+          41.4883,
+          13.8167
+        ],
+        "label": "Difusão da Regra Beneditina"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "year": "800 d.C.",
+    "century": "media",
+    "title": "Coroação de Carlos Magno",
+    "era": "Sacro Império",
+    "ccc": "CIC § 2244",
+    "region": "Roma & Aachen",
+    "coords": [
+      50.7753,
+      6.0839
+    ],
+    "zoom": 5,
+    "overview": "O Papa Leão III coroa Carlos Magno na Basílica de São Pedro na noite de Natal. Nasce o Sacro Império Romano-Germânico.",
+    "theology": "Concepção da Cristandade ocidental e colaboração harmoniosa entre Trono e Altar.",
+    "quote": "«A Carlos Augusto, coroado por Deus, grande e pacífico imperador dos Romanos, vida e vitória!»",
+    "figures": "Papa Leão III, Imperador Carlos Magno, Alcuíno de York.",
+    "artTitle": "A Coroa Imperial de Carlos Magno",
+    "artDesc": "Joalheria sacra carolíngia preservada no Tesouro de Viena.",
+    "routes": [
+      {
+        "from": [
+          41.4883,
+          13.8167
+        ],
+        "to": [
+          50.7753,
+          6.0839
+        ],
+        "label": "Aliança com os Francos"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "year": "1054 d.C.",
+    "century": "media",
+    "title": "O Grande Cisma do Oriente",
+    "era": "Cisma",
+    "ccc": "CIC § 817",
+    "region": "Constantinopla",
+    "coords": [
+      41.0082,
+      28.9784
+    ],
+    "zoom": 5,
+    "overview": "Ruptura trágica de comunhão entre a Igreja Latina Ocidental e os Patriarcados Ortodoxos Orientais.",
+    "theology": "Controvérsias do Filioque, jurisdição primacial romana e pão ázimo nas espécies eucarísticas.",
+    "quote": "«Que a paz de Deus reine onde quer que haja boa vontade entre os homens de fé.»",
+    "figures": "Patriarca Miguel Cerulário, Cardeal Humberto de Silva Candida.",
+    "artTitle": "A Basílica de Santa Sofia",
+    "artDesc": "Arquitetura e mosaicos dourados da Cristandade Bizantina.",
+    "routes": [
+      {
+        "from": [
+          50.7753,
+          6.0839
+        ],
+        "to": [
+          41.0082,
+          28.9784
+        ],
+        "label": "Ruptura Eclesiástica"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "year": "1210 - 1216 d.C.",
+    "century": "media",
+    "title": "Eclosão das Ordens Mendicantes",
+    "era": "Renovação Evangélica",
+    "ccc": "CIC § 919",
+    "region": "Assis & Roma",
+    "coords": [
+      43.0643,
+      12.6033
+    ],
+    "zoom": 6,
+    "overview": "São Francisco e São Domingos fundam as Ordens dos Frades Menores (Franciscanos) e Pregadores (Dominicanos).",
+    "theology": "Pobreza evangélica radical, combate intelectual às heresias e pregação apostólica itinerante.",
+    "quote": "«Francisco, vai e repara a minha Igreja que está em ruínas.» — Revelação do Crucifixo de São Damião",
+    "figures": "São Francisco de Assis, São Domingos de Gusmão, Papa Inocêncio III.",
+    "artTitle": "Afrescos de Giotto na Basílica de Assis",
+    "artDesc": "Representação magistral do Sonho de Inocêncio III e estigmas de São Francisco.",
+    "routes": []
+  },
+  {
+    "id": 10,
+    "year": "1274 d.C.",
+    "century": "media",
+    "title": "A Suma Teológica de Tomás de Aquino",
+    "era": "A Escolástica",
+    "ccc": "CIC § 39",
+    "region": "Paris & Nápoles",
+    "coords": [
+      48.8566,
+      2.3522
+    ],
+    "zoom": 5,
+    "overview": "São Tomás de Aquino sintetiza com perfeição monumental a filosofia aristotélica com a Revelação divina cristã.",
+    "theology": "Harmonia sublime entre Razão (Ratio) e Fé (Fides). As Cinco Vias da demonstração da existência de Deus.",
+    "quote": "«A Fé não destrói a Razão, mas supõe-na e eleva-a à perfeição.» — São Tomás de Aquino",
+    "figures": "São Tomás de Aquino, São Boaventura, Santo Alberto Magno.",
+    "artTitle": "O Triunfo de São Tomás de Aquino",
+    "artDesc": "Pintura de Benozzo Gozzoli e afrescos das Universidades Medievais.",
+    "routes": [
+      {
+        "from": [
+          43.0643,
+          12.6033
+        ],
+        "to": [
+          48.8566,
+          2.3522
+        ],
+        "label": "Florescimento Universitário"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "year": "1545 - 1563 d.C.",
+    "century": "moderna",
+    "title": "O Sagrado Concílio de Trento",
+    "era": "Contrarreforma",
+    "ccc": "CIC § 1376",
+    "region": "Trento, Itália",
+    "coords": [
+      46.0679,
+      11.1211
+    ],
+    "zoom": 6,
+    "overview": "O maior concílio dogmático da era moderna reafirma a Tradição, os sete Sacramentos e reforma os Seminários.",
+    "theology": "Definição dogmática da Transubstanciação Eucarística, Justificação pela Graça e obras e o Cânone da Bíblia.",
+    "quote": "«Se alguém disser que os sacramentos da Nova Lei não foram instituídos por Cristo, seja anátema.»",
+    "figures": "São Carlos Borromeu, Santo Inácio de Loyola, Papa Pio V.",
+    "artTitle": "Sessão Conciliar no Duomo de Trento",
+    "artDesc": "Gravuras e quadros barrocos glorificando o Santo Sacrifício da Missa.",
+    "routes": [
+      {
+        "from": [
+          48.8566,
+          2.3522
+        ],
+        "to": [
+          46.0679,
+          11.1211
+        ],
+        "label": "Reforma Católica Tridentina"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "year": "1962 - 1965 d.C.",
+    "century": "contemporanea",
+    "title": "II Concílio Ecumênico do Vaticano",
+    "era": "Era Contemporânea",
+    "ccc": "CIC § 816",
+    "region": "Vaticano, Roma",
+    "coords": [
+      41.9029,
+      12.4534
+    ],
+    "zoom": 6,
+    "overview": "Convocado pelo Papa São João XXIII. Renovação pastoral, ecumenismo, liturgia no vernáculo e diálogo com o mundo.",
+    "theology": "Construção da Constituição Lumen Gentium (A Igreja como Luz das Nações) e Gaudium et Spes.",
+    "quote": "«Quero abrir as janelas da Igreja para que possamos ver o que acontece do lado de fora.» — São João XXIII",
+    "figures": "São João XXIII, São Paulo VI, Cardeal Joseph Ratzinger, Karol Wojtyła.",
+    "artTitle": "Fotografias da Abertura Solene da Basílica de São Pedro",
+    "artDesc": "Milhares de Bispos reunidos na nave central da Basílica Papal.",
+    "routes": [
+      {
+        "from": [
+          46.0679,
+          11.1211
+        ],
+        "to": [
+          41.9029,
+          12.4534
+        ],
+        "label": "Assembleia Conciliar Global"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "year": "2026 d.C.",
+    "century": "contemporanea",
+    "title": "A Igreja Global Sinodal",
+    "era": "Terceiro Milênio",
+    "ccc": "CIC § 782",
+    "region": "Mundo Inteiro",
+    "coords": [
+      41.9029,
+      12.4534
+    ],
+    "zoom": 3,
+    "overview": "Mais de 1,38 bilhão de fiéis católicos espalhados por todos os continentes sob a liderança do Papa Francisco.",
+    "theology": "Sinodalidade, ecologia integral, comunhão missionária e fraternidade humana universal.",
+    "quote": "«Uma Igreja em saída com as portas abertas para acolher e evangelizar todas as periferias.» — Papa Francisco",
+    "figures": "Papa Francisco, Colegiado dos Cardeais e Bispos do Mundo.",
+    "artTitle": "Jornada Mundial da Juventude & Missão Universal",
+    "artDesc": "A bandeira das nações reunida na fé católica.",
+    "routes": [
+      {
+        "from": [
+          41.9029,
+          12.4534
+        ],
+        "to": [
+          -22.9068,
+          -43.1729
+        ],
+        "label": "Apostolado nos Cinco Continentes"
+      }
+    ]
+  }
+]
