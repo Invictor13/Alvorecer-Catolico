@@ -1,6 +1,19 @@
-import { initGiantMap, updateGiantMap } from '../mapa-mundi/mapa.js';
+import { initGiantMap, updateGiantMap, updateMapLayers } from '../mapa-mundi/mapa.js';
 
 let timelineEras = [];
+let currentEraIndex = 0;
+let isPlaying = false;
+let playInterval = null;
+let playSpeed = 1; // 1 = 1x, 2 = 2x, 5 = 5x
+let isCinematic = false;
+
+// Filter state
+let activeLayers = {
+  politics: true,
+  routes: true,
+  monuments: true,
+  missions: true
+};
 
 export async function fetchEras() {
   try {
@@ -15,34 +28,170 @@ export function loadTimelineStage(hideAllStages) {
   hideAllStages();
   document.getElementById('timeline-map-stage').classList.remove('hidden');
 
-  const container = document.getElementById('timeline-controls');
-  container.innerHTML = timelineEras.map((era, idx) => `
-    <button onclick="window.selectTimelineEra(${idx})" id="era-btn-${idx}" class="timeline-era-btn p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-all font-medium">
-      <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-bold truncate">${era.title.split('•')[0]}</div>
-      <div class="text-[11px] font-bold font-cinzel text-slate-800 dark:text-slate-200 truncate">${era.title.split('•')[1]}</div>
-    </button>
-  `).join('');
+  initScrubber();
 
-  setTimeout(() => { initGiantMap(); selectTimelineEra(0); }, 100);
+  setTimeout(() => {
+    initGiantMap();
+    selectTimelineEra(0);
+  }, 100);
+}
+
+function initScrubber() {
+  const slider = document.getElementById('timeline-slider');
+  slider.max = timelineEras.length - 1;
+  slider.value = 0;
+
+  // Create markers
+  const markersContainer = document.getElementById('timeline-markers');
+  markersContainer.innerHTML = '';
+
+  timelineEras.forEach((era, idx) => {
+    const marker = document.createElement('div');
+    marker.className = 'w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 transition-colors';
+    marker.id = `marker-${idx}`;
+    markersContainer.appendChild(marker);
+  });
+}
+
+function updateScrubberUI() {
+  const slider = document.getElementById('timeline-slider');
+  slider.value = currentEraIndex;
+
+  const progress = document.getElementById('timeline-progress');
+  const percentage = (currentEraIndex / (timelineEras.length - 1)) * 100;
+  progress.style.width = `${percentage}%`;
+
+  // Update markers
+  timelineEras.forEach((_, idx) => {
+    const marker = document.getElementById(`marker-${idx}`);
+    if (marker) {
+      if (idx <= currentEraIndex) {
+        marker.classList.add('bg-gold-400');
+        marker.classList.remove('bg-slate-300', 'dark:bg-slate-600');
+      } else {
+        marker.classList.remove('bg-gold-400');
+        marker.classList.add('bg-slate-300', 'dark:bg-slate-600');
+      }
+    }
+  });
+}
+
+export function handleTimelineSliderChange(event) {
+  const index = parseInt(event.target.value, 10);
+  if (index !== currentEraIndex) {
+    selectTimelineEra(index);
+    if (isPlaying) {
+      toggleTimelinePlay(); // Pause if user manually scrubs
+    }
+  }
 }
 
 export function selectTimelineEra(index) {
+  if (index < 0 || index >= timelineEras.length) return;
+
+  currentEraIndex = index;
   const era = timelineEras[index];
-  if (!era) return;
 
-  document.querySelectorAll('.timeline-era-btn').forEach((btn, idx) => {
-    if (idx === index) {
-      btn.classList.add('border-marian-500', 'bg-marian-50', 'dark:bg-marian-900/30', 'shadow-sm');
-      btn.classList.remove('border-slate-200', 'dark:border-slate-700', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
-    } else {
-      btn.classList.remove('border-marian-500', 'bg-marian-50', 'dark:bg-marian-900/30', 'shadow-sm');
-      btn.classList.add('border-slate-200', 'dark:border-slate-700', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
-    }
-  });
+  // Play sound effect context
+  if (window.playEraSound) {
+    window.playEraSound(index);
+  }
 
-  document.getElementById('timeline-era-title').innerText = era.title;
+  // Update Texts
+  const titleParts = era.title.split('•');
+  document.getElementById('timeline-era-title').innerText = titleParts[1] ? titleParts[1].trim() : era.title;
+  document.getElementById('timeline-era-subtitle').innerText = titleParts[0] ? titleParts[0].trim() : '';
+
   document.getElementById('timeline-church-desc').innerText = era.churchDesc;
   document.getElementById('timeline-humanity-desc').innerText = era.humanityDesc;
 
-  updateGiantMap(era.center, era.zoom, era.markers);
+  updateScrubberUI();
+  updateMapLayers(activeLayers);
+  updateGiantMap(era.center, era.zoom, era, isCinematic);
+}
+
+export function toggleTimelinePlay() {
+  isPlaying = !isPlaying;
+  const btnIcon = document.querySelector('#timeline-play-btn i');
+
+  if (isPlaying) {
+    btnIcon.setAttribute('data-lucide', 'pause');
+    if (currentEraIndex >= timelineEras.length - 1) {
+      selectTimelineEra(0); // Restart if at the end
+    }
+    const intervalTime = 4000 / playSpeed; // Base time 4s per era
+    playInterval = setInterval(() => {
+      if (currentEraIndex < timelineEras.length - 1) {
+        selectTimelineEra(currentEraIndex + 1);
+      } else {
+        toggleTimelinePlay(); // Stop when finished
+      }
+    }, intervalTime);
+  } else {
+    btnIcon.setAttribute('data-lucide', 'play');
+    clearInterval(playInterval);
+  }
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+export function timelineNextEra() {
+  if (currentEraIndex < timelineEras.length - 1) {
+    selectTimelineEra(currentEraIndex + 1);
+  }
+}
+
+export function timelinePrevEra() {
+  if (currentEraIndex > 0) {
+    selectTimelineEra(currentEraIndex - 1);
+  }
+}
+
+export function setTimelineSpeed(speed) {
+  playSpeed = speed;
+
+  // Update buttons UI
+  document.querySelectorAll('.timeline-speed-btn').forEach(btn => {
+    if (parseInt(btn.dataset.speed) === speed) {
+      btn.classList.add('text-marian-700', 'dark:text-white', 'bg-white', 'dark:bg-slate-700', 'shadow-sm');
+      btn.classList.remove('text-slate-500', 'dark:text-slate-400', 'bg-transparent');
+    } else {
+      btn.classList.remove('text-marian-700', 'dark:text-white', 'bg-white', 'dark:bg-slate-700', 'shadow-sm');
+      btn.classList.add('text-slate-500', 'dark:text-slate-400', 'bg-transparent');
+    }
+  });
+
+  if (isPlaying) {
+    // Restart interval with new speed
+    toggleTimelinePlay();
+    toggleTimelinePlay();
+  }
+}
+
+export function toggleCinematicMode() {
+  isCinematic = !isCinematic;
+  const btn = document.getElementById('cinematic-btn');
+
+  if (isCinematic) {
+    btn.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2', 'dark:ring-offset-slate-900');
+    if (!isPlaying) toggleTimelinePlay(); // Auto-start
+  } else {
+    btn.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'dark:ring-offset-slate-900');
+  }
+}
+
+export function toggleMapLayer(layerId) {
+  activeLayers[layerId] = !activeLayers[layerId];
+
+  const btn = document.getElementById(`layer-btn-${layerId}`);
+  if (activeLayers[layerId]) {
+    btn.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-marian-900', 'dark:text-white');
+    btn.classList.remove('text-slate-600', 'dark:text-slate-400');
+  } else {
+    btn.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-marian-900', 'dark:text-white');
+    btn.classList.add('text-slate-600', 'dark:text-slate-400');
+  }
+
+  // Re-render current era to apply filters
+  selectTimelineEra(currentEraIndex);
 }

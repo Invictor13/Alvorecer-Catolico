@@ -324,6 +324,27 @@ async function toggleAudio() {
   }
 }
 
+window.playEraSound = function(index) {
+  if (!isAudioPlaying || !audioSynth) return;
+  // Toca um badalar suave para marcar a transição de era
+  const bellSynth = new Tone.MetalSynth({
+    frequency: 200,
+    envelope: { attack: 0.001, decay: 1.4, release: 0.2 },
+    harmonicity: 5.1,
+    modulationIndex: 32,
+    resonance: 4000,
+    octaves: 1.5
+  }).toDestination();
+
+  bellSynth.volume.value = -10;
+
+  // Varia levemente a nota com base no index
+  const notes = ["C4", "E4", "G4", "B4"];
+  const note = notes[index % notes.length];
+
+  bellSynth.triggerAttackRelease(note, "1n");
+};
+
 function previewSidebarItem(key) {
   if (document.getElementById('content-stage').classList.contains('hidden') === false) return;
 
@@ -553,6 +574,14 @@ window.toggleSidebar = toggleSidebar;
 window.handleSidebarMouseLeave = handleSidebarMouseLeave;
 window.loadTimelineStage = () => loadTimelineStage(hideAllStages);
 window.selectTimelineEra = selectTimelineEra;
+import { handleTimelineSliderChange, toggleTimelinePlay, timelineNextEra, timelinePrevEra, setTimelineSpeed, toggleCinematicMode, toggleMapLayer } from './modos/linha-do-tempo/timeline.js';
+window.handleTimelineSliderChange = handleTimelineSliderChange;
+window.toggleTimelinePlay = toggleTimelinePlay;
+window.timelineNextEra = timelineNextEra;
+window.timelinePrevEra = timelinePrevEra;
+window.setTimelineSpeed = setTimelineSpeed;
+window.toggleCinematicMode = toggleCinematicMode;
+window.toggleMapLayer = toggleMapLayer;
 window.filterSidebar = filterSidebar;
 window.previewSidebarItem = previewSidebarItem;
 window.loadFullContent = loadFullContent;
