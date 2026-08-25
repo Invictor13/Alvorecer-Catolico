@@ -35,6 +35,95 @@
       background: radial-gradient(circle at center, rgba(251,191,36,0.05) 0%, transparent 70%);
     }
 
+    /* Estilização Cartográfica Épica (Mapa) */
+    .leaflet-container {
+      background: #e6e2d3 !important; /* Cor de pergaminho antigo */
+      font-family: 'Cinzel', serif;
+    }
+    .dark .leaflet-container {
+      background: #1a1a24 !important; /* Tons sombrios noturnos */
+    }
+
+    /* Névoa da História (Fog of War) */
+    .fog-of-war-layer {
+      pointer-events: none;
+      transition: opacity 2s ease-in-out;
+    }
+
+    /* Efeito de pergaminho sutil sobre o mapa */
+    .leaflet-overlay-pane {
+      filter: sepia(0.3) contrast(1.1) brightness(0.9);
+    }
+    .dark .leaflet-overlay-pane {
+      filter: sepia(0.2) contrast(1.2) brightness(0.7) hue-rotate(180deg) invert(0.8);
+    }
+
+    /* Animação para Linhas de Rotas (Tinta Viva) */
+    .route-line {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawRoute 3s ease-in-out forwards;
+      filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.8));
+    }
+
+    @keyframes drawRoute {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Marcadores Customizados */
+    .custom-marker-icon {
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .marker-glow {
+      animation: markerPulse 2s infinite alternate;
+      filter: drop-shadow(0 0 5px currentColor);
+    }
+
+    @keyframes markerPulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 5px currentColor); }
+      100% { transform: scale(1.1); filter: drop-shadow(0 0 10px currentColor); }
+    }
+
+    .marker-build-up {
+      animation: buildUp 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transform-origin: bottom center;
+    }
+
+    @keyframes buildUp {
+      0% { transform: scaleY(0); opacity: 0; }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+
+    /* Pulsos de Difusão */
+    .diffusion-pulse {
+      animation: expandPulse 4s ease-out infinite;
+      transform-origin: center;
+      border-radius: 50%;
+    }
+
+    @keyframes expandPulse {
+      0% { transform: scale(0.1); opacity: 0.8; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+
+    /* Zonas de Conflito */
+    .conflict-zone {
+      animation: pulseConflict 3s infinite alternate ease-in-out;
+      fill-opacity: 0.3;
+    }
+
+    @keyframes pulseConflict {
+      0% { fill-opacity: 0.1; stroke-opacity: 0.3; }
+      100% { fill-opacity: 0.4; stroke-opacity: 0.8; }
+    }
+
     /* Modal Styles */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);

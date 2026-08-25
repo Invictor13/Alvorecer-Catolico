@@ -3,21 +3,53 @@
     "title": "Séc. I – II • Era Apostólica",
     "churchDesc": "Início em Pentecostes e expansão no Mediterrâneo.",
     "humanityDesc": "Pax Romana e estradas unificadas.",
-    "center": [
-      38,
-      25
-    ],
+    "center": [38, 25],
     "zoom": 4,
     "markers": [
       {
         "lat": 31.7683,
         "lng": 35.2137,
-        "title": "Jerusalém"
+        "title": "Jerusalém",
+        "type": "cross",
+        "layer": "routes",
+        "description": "Pentecostes e primeira comunidade cristã."
       },
       {
         "lat": 41.9028,
         "lng": 12.4964,
-        "title": "Roma"
+        "title": "Roma",
+        "type": "basilica",
+        "layer": "monuments",
+        "description": "Sede do papado e martírio de Pedro e Paulo."
+      }
+    ],
+    "routes": [
+      {
+        "name": "Viagens de São Paulo",
+        "layer": "routes",
+        "coordinates": [
+          [31.7683, 35.2137],
+          [36.2021, 36.1606],
+          [37.9838, 23.7275],
+          [41.9028, 12.4964]
+        ]
+      }
+    ],
+    "pulses": [
+      {
+        "lat": 31.7683,
+        "lng": 35.2137,
+        "radius": 500000,
+        "color": "#fbbf24"
+      }
+    ],
+    "conflicts": [
+      {
+        "lat": 41.9028,
+        "lng": 12.4964,
+        "radius": 200000,
+        "color": "#ef4444",
+        "title": "Perseguições Romanas"
       }
     ]
   },
@@ -25,17 +57,136 @@
     "title": "Séc. IV – V • Império Cristão",
     "churchDesc": "Édito de Milão e Concílio de Niceia.",
     "humanityDesc": "Divisão de Roma e invasões bárbaras.",
-    "center": [
-      40.4,
-      29.7
-    ],
-    "zoom": 4,
+    "center": [40.4, 29.7],
+    "zoom": 5,
     "markers": [
       {
         "lat": 40.4286,
         "lng": 29.7215,
-        "title": "Niceia"
+        "title": "Niceia",
+        "type": "scroll",
+        "layer": "politics",
+        "description": "Primeiro Concílio Ecumênico (325 d.C.)."
+      },
+      {
+        "lat": 41.0082,
+        "lng": 28.9784,
+        "title": "Constantinopla",
+        "type": "basilica",
+        "layer": "monuments",
+        "description": "Nova Roma e Hagia Sophia."
+      }
+    ],
+    "routes": [],
+    "pulses": [
+      {
+        "lat": 40.4286,
+        "lng": 29.7215,
+        "radius": 800000,
+        "color": "#fbbf24"
+      }
+    ],
+    "conflicts": []
+  },
+  {
+    "title": "Séc. XI – XV • Idade Média",
+    "churchDesc": "Universidades, Catedrais Góticas e Ordens Mendicantes.",
+    "humanityDesc": "Feudalismo, Cruzadas e Renascimento Comercial.",
+    "center": [46.2276, 2.2137],
+    "zoom": 4,
+    "markers": [
+      {
+        "lat": 48.8566,
+        "lng": 2.3522,
+        "title": "Paris",
+        "type": "basilica",
+        "layer": "monuments",
+        "description": "Fundação da Universidade de Paris e Notre-Dame."
+      },
+      {
+        "lat": 43.0728,
+        "lng": 12.6105,
+        "title": "Assis",
+        "type": "cross",
+        "layer": "routes",
+        "description": "São Francisco e as Ordens Mendicantes."
+      }
+    ],
+    "routes": [
+      {
+        "name": "Caminho de Santiago",
+        "layer": "routes",
+        "coordinates": [
+          [48.8566, 2.3522],
+          [44.8378, -0.5792],
+          [42.8125, -1.6458],
+          [42.8805, -8.5456]
+        ]
+      }
+    ],
+    "pulses": [],
+    "conflicts": [
+      {
+        "lat": 31.7683,
+        "lng": 35.2137,
+        "radius": 300000,
+        "color": "#ef4444",
+        "title": "As Cruzadas"
       }
     ]
+  },
+  {
+    "title": "Séc. XVI – XVIII • Missões e Reforma",
+    "churchDesc": "Contra-Reforma, Concílio de Trento e Missões Globais.",
+    "humanityDesc": "Grandes Navegações e Descoberta das Américas.",
+    "center": [20.0, -40.0],
+    "zoom": 3,
+    "markers": [
+      {
+        "lat": 46.0667,
+        "lng": 11.1167,
+        "title": "Trento",
+        "type": "scroll",
+        "layer": "politics",
+        "description": "Concílio de Trento."
+      },
+      {
+        "lat": -12.9714,
+        "lng": -38.5113,
+        "title": "Bahia, Brasil",
+        "type": "cross",
+        "layer": "missions",
+        "description": "Missões Jesuítas no Novo Mundo."
+      },
+      {
+        "lat": 15.2993,
+        "lng": 74.124,
+        "title": "Goa, Índia",
+        "type": "cross",
+        "layer": "missions",
+        "description": "São Francisco Xavier no Oriente."
+      }
+    ],
+    "routes": [
+      {
+        "name": "Rota Missionária do Oriente",
+        "layer": "missions",
+        "coordinates": [
+          [38.7223, -9.1393],
+          [-34.3568, 18.471],
+          [15.2993, 74.124],
+          [32.7503, 129.8777]
+        ]
+      }
+    ],
+    "pulses": [
+      {
+        "lat": 46.0667,
+        "lng": 11.1167,
+        "radius": 1000000,
+        "color": "#fbbf24"
+      }
+    ],
+    "conflicts": []
   }
 ]
