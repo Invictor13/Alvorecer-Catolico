@@ -346,7 +346,7 @@ window.playEraSound = function(index) {
 };
 
 function previewSidebarItem(key) {
-  if (document.getElementById('content-stage').classList.contains('hidden') === false) return;
+  if (document.getElementById('book-stage').classList.contains('hidden') === false) return;
 
   const item = dataModules[key];
   if (!item) return;
@@ -362,6 +362,7 @@ function previewSidebarItem(key) {
   document.getElementById('preview-cta-btn').onclick = () => window.loadFullContent(key);
 
   updateParticleColor(item.color);
+  if(window.innerWidth < 1024 && sidebarOpen) toggleSidebar();
 }
 
 function loadFullContent(key) {
@@ -369,41 +370,105 @@ function loadFullContent(key) {
   if (!item) return;
 
   hideAllStages();
-  const stage = document.getElementById('content-stage');
+  const stage = document.getElementById('book-stage');
   stage.classList.remove('hidden');
 
-  stage.classList.remove('animate-slide-up');
-  void stage.offsetWidth;
-  stage.classList.add('animate-slide-up');
+  // Reset Book Cover
+  const cover = stage.querySelector('.book-cover');
+  if(cover) cover.classList.remove('open');
 
-  document.getElementById('content-category-tag').innerText = item.categoryName;
-  document.getElementById('content-period-tag').innerText = item.period;
-  document.getElementById('content-title').innerText = item.title;
-  document.getElementById('content-description').innerText = item.description;
-  document.getElementById('content-highlights').innerText = item.highlights;
-  document.getElementById('content-quote').innerText = item.quote;
-  document.getElementById('content-secular').innerText = item.secular;
+  // Update Cover
+  const coverTitle = document.getElementById('book-cover-title');
+  if(coverTitle) coverTitle.innerText = item.title;
 
-  const saintsContainer = document.getElementById('content-saints');
-  saintsContainer.innerHTML = (item.saints || []).map(s => `
-    <div class="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
-      <div class="font-bold text-xs text-slate-800 dark:text-slate-200">${s.name}</div>
-      <div class="text-[11px] text-marian-700 dark:text-gold-400 font-medium">${s.role}</div>
-      <div class="text-[11px] text-slate-500 mt-0.5">${s.detail}</div>
-    </div>
-  `).join('');
+  // Update Content
+  const cat = document.getElementById('book-category');
+  if(cat) cat.innerText = item.categoryName;
 
-  updateParticleColor(item.color);
+  const per = document.getElementById('book-period');
+  if(per) per.innerText = item.period;
 
-  // Map interaction logic: Only load map stage if category is paroquias_rotas or it has map coordinates.
-  const hasMap = item.mapCenter && item.mapCenter.length > 0;
-  if (item.category === 'paroquias_rotas' || hasMap) {
-      setTimeout(() => initLeafletMap(item.mapCenter, item.mapZoom, item.markers), 100);
-      // Wait to not conflict with map animations
+  const title = document.getElementById('book-title');
+  if(title) title.innerText = item.title;
+
+  const desc = document.getElementById('book-description');
+  if(desc) desc.innerText = item.description;
+
+  const quote = document.getElementById('book-quote');
+  if(quote) quote.innerText = item.quote;
+
+  const secular = document.getElementById('book-secular');
+  if(secular) secular.innerText = item.secular;
+
+  const img = document.getElementById('book-image');
+  if (item.image && img) {
+    img.src = item.image;
   }
 
+  const saintsContainer = document.getElementById('book-saints');
+  if(saintsContainer) {
+      saintsContainer.innerHTML = (item.saints || []).map(s => `
+        <span class="block mb-1 font-bold text-sacred-800 dark:text-[#7a1c1c]">${s.name}</span>
+        <span class="block text-[10px] mb-2">${s.role} - ${s.detail}</span>
+      `).join('');
+  }
+
+  // Store current item globally for flyToGlobe
+  window.currentActiveItem = item;
+
+  lucide.createIcons();
+
+  updateParticleColor(item.color);
   if(window.innerWidth < 1024 && sidebarOpen) toggleSidebar();
 }
+
+function flyToItemGlobe() {
+  if (!window.currentActiveItem || !window.currentActiveItem.mapCenter) return;
+  hideAllStages();
+  document.getElementById('timeline-map-stage').classList.remove('hidden');
+  import('./modos/mapa-mundi/mapa.js').then(module => {
+    module.updateGiantMap(window.currentActiveItem.mapCenter, 6, window.currentActiveItem, true);
+  });
+}
+
+function openBook() {
+  const cover = document.querySelector('.book-cover');
+  if(cover && !cover.classList.contains('open')) {
+    cover.classList.add('open');
+    playBookOpenSound();
+  }
+}
+
+function playBookOpenSound() {
+  if (typeof Tone === 'undefined') return;
+  // Synthesize a deep thud for the heavy leather cover
+  const thud = new Tone.MembraneSynth({
+    pitchDecay: 0.1,
+    octaves: 2,
+    oscillator: { type: "sine" },
+    envelope: { attack: 0.01, decay: 0.4, sustain: 0.01, release: 0.5 }
+  }).toDestination();
+  thud.volume.value = -10;
+
+  // Synthesize a rustle for the pages
+  const noise = new Tone.NoiseSynth({
+    noise: { type: "brown" },
+    envelope: { attack: 0.05, decay: 0.2, sustain: 0, release: 0.1 }
+  }).toDestination();
+  noise.volume.value = -20;
+
+  // Requires user interaction, so we wrap it just in case
+  try {
+      if(Tone.context.state !== 'running') {
+          Tone.start();
+      }
+      thud.triggerAttackRelease("C2", "8n");
+      setTimeout(() => noise.triggerAttackRelease("16n"), 200);
+  } catch(e) {
+      console.warn("Audio context could not start.", e);
+  }
+}
+
 
 function resetToAmbient() {
   hideAllStages();
@@ -412,8 +477,9 @@ function resetToAmbient() {
 }
 
 function hideAllStages() {
-  ['ambient-stage', 'timeline-map-stage', 'preview-stage', 'content-stage'].forEach(id => {
-    document.getElementById(id).classList.add('hidden');
+  ['ambient-stage', 'timeline-map-stage', 'preview-stage', 'content-stage', 'book-stage'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.add('hidden');
   });
 }
 
@@ -585,6 +651,8 @@ window.toggleMapLayer = toggleMapLayer;
 window.filterSidebar = filterSidebar;
 window.previewSidebarItem = previewSidebarItem;
 window.loadFullContent = loadFullContent;
+window.openBook = openBook;
+window.flyToItemGlobe = flyToItemGlobe;
 window.closeModal = closeModal;
 window.handleSearch = handleSearch;
 window.findNearbyChurches = findNearbyChurches;
