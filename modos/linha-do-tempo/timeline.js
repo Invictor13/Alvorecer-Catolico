@@ -77,12 +77,14 @@ function updateScrubberUI() {
 }
 
 export function handleTimelineSliderChange(event) {
+  if (isCinematic || isPlaying) {
+    event.target.value = currentEraIndex; // reset slider
+    return; // Block manual override during cinematic or playing
+  }
+
   const index = parseInt(event.target.value, 10);
   if (index !== currentEraIndex) {
     selectTimelineEra(index);
-    if (isPlaying) {
-      toggleTimelinePlay(); // Pause if user manually scrubs
-    }
   }
 }
 
@@ -111,11 +113,21 @@ export function selectTimelineEra(index) {
 }
 
 export function toggleTimelinePlay() {
+  if (!giantLeafletMap || timelineEras.length === 0) {
+    console.warn("Aguardando carregamento do mapa e dados históricos...");
+    return;
+  }
+
   isPlaying = !isPlaying;
   const btnIcon = document.querySelector('#timeline-play-btn i');
 
+  if (playInterval) {
+    clearInterval(playInterval);
+    playInterval = null;
+  }
+
   if (isPlaying) {
-    btnIcon.setAttribute('data-lucide', 'pause');
+    if (btnIcon) btnIcon.setAttribute('data-lucide', 'pause');
     if (currentEraIndex >= timelineEras.length - 1) {
       selectTimelineEra(0); // Restart if at the end
     }
@@ -124,24 +136,26 @@ export function toggleTimelinePlay() {
       if (currentEraIndex < timelineEras.length - 1) {
         selectTimelineEra(currentEraIndex + 1);
       } else {
-        toggleTimelinePlay(); // Stop when finished
+        if (isPlaying) toggleTimelinePlay(); // Stop when finished
       }
     }, intervalTime);
   } else {
-    btnIcon.setAttribute('data-lucide', 'play');
-    clearInterval(playInterval);
+    if (btnIcon) btnIcon.setAttribute('data-lucide', 'play');
+    if (isCinematic) toggleCinematicMode(); // Also turn off cinematic if paused
   }
 
   if (window.lucide) window.lucide.createIcons();
 }
 
 export function timelineNextEra() {
+  if (isCinematic || isPlaying) return;
   if (currentEraIndex < timelineEras.length - 1) {
     selectTimelineEra(currentEraIndex + 1);
   }
 }
 
 export function timelinePrevEra() {
+  if (isCinematic || isPlaying) return;
   if (currentEraIndex > 0) {
     selectTimelineEra(currentEraIndex - 1);
   }
@@ -172,11 +186,38 @@ export function toggleCinematicMode() {
   isCinematic = !isCinematic;
   const btn = document.getElementById('cinematic-btn');
 
-  if (isCinematic) {
-    btn.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2', 'dark:ring-offset-slate-900');
-    if (!isPlaying) toggleTimelinePlay(); // Auto-start
-  } else {
-    btn.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'dark:ring-offset-slate-900');
+  if (btn) {
+    if (isCinematic) {
+      btn.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2', 'dark:ring-offset-slate-900');
+    } else {
+      btn.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'dark:ring-offset-slate-900');
+    }
+  }
+
+  if (isCinematic && !isPlaying) {
+    iniciarModoHistoria();
+  } else if (!isCinematic && isPlaying) {
+    toggleTimelinePlay();
+  }
+}
+
+export async function iniciarModoHistoria() {
+  if (!giantLeafletMap || timelineEras.length === 0) {
+    console.warn("Aguardando carregamento do mapa e dados históricos...");
+    // Reset state since it failed to start
+    isCinematic = false;
+    const btn = document.getElementById('cinematic-btn');
+    if (btn) btn.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'dark:ring-offset-slate-900');
+    return;
+  }
+
+  if (playInterval) {
+    clearInterval(playInterval);
+    playInterval = null;
+  }
+
+  if (!isPlaying) {
+     toggleTimelinePlay();
   }
 }
 
