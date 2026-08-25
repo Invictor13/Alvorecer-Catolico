@@ -75,6 +75,9 @@ function runTypewriter() {
             revealGroup.classList.remove('hidden');
             revealGroup.classList.add('flex');
           }
+
+          // Auto-redirect after 10 seconds (10000ms)
+          setTimeout(enterPortal, 10000);
         }, 1500);
       }
     }, 60); // Speed of typing
