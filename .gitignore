@@ -1,3 +1,5 @@
 node_modules/
 package-lock.json
 test-results/
+server.log
+live_server.log

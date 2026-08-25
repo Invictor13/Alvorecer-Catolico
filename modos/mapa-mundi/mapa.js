@@ -57,10 +57,23 @@ export function updateGiantMap(center, zoom, data, isCinematic = false) {
     }
   });
 
+  // Ensure invalidateSize is called before doing animations to avoid SVG/WebGL glitches
+  giantLeafletMap.invalidateSize();
+
+  // Sanitize coordinates
+  let lat = center[0];
+  let lng = center[1];
+
+  // If lat/lng were somehow mixed up (latitude is typically -90 to 90)
+  if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) {
+    lat = center[1];
+    lng = center[0];
+  }
+
   if (isCinematic) {
-    giantLeafletMap.flyTo(center, zoom, { duration: 2, easeLinearity: 0.25 });
+    giantLeafletMap.flyTo([lat, lng], zoom, { duration: 2.5, easeLinearity: 0.25 });
   } else {
-    giantLeafletMap.setView(center, zoom);
+    giantLeafletMap.setView([lat, lng], zoom);
   }
 
   const markers = data.markers || [];
