@@ -34,59 +34,49 @@ async function init() {
 
   lucide.createIcons();
 
-  runTypewriter();
+  runIntroSequence();
 }
 
-function runTypewriter() {
-  const badge = document.getElementById('splash-badge');
-  const cross = document.getElementById('splash-cross');
-  const textEl = document.getElementById('typewriter-text');
-  const cursor = document.getElementById('typewriter-cursor');
-  const verseRef = document.getElementById('verse-ref');
-  const revealGroup = document.getElementById('splash-reveal-group');
+function triggerRipple() {
+  const rippleLayer = document.getElementById('ripple-layer');
+  if (!rippleLayer) return;
+  const ripple = document.createElement('div');
+  ripple.className = 'water-ripple';
+  rippleLayer.appendChild(ripple);
+  // Match removal with the new 3.5s animation duration from CSS
+  setTimeout(() => ripple.remove(), 3600);
+}
 
-  if (!textEl) return;
+function runIntroSequence() {
+  const phase1 = document.getElementById('intro-phase-1');
+  const phase2 = document.getElementById('intro-phase-2');
 
-  const text = "A luz resplandece nas trevas, e as trevas não a derrotaram.";
-  let i = 0;
-
-  // Immediate fade in for badge and cross
+  // Gota 1 -> Fase 1
   setTimeout(() => {
-    if (badge) badge.classList.remove('opacity-0');
-    if (cross) cross.classList.remove('opacity-0');
-  }, 100);
+    triggerRipple();
+    if (phase1) {
+      phase1.classList.remove('opacity-0');
+    }
+  }, 1500);
 
-  // Typewriter sequence
+  // Gota 2 -> Fase 2
   setTimeout(() => {
-    const typeInterval = setInterval(() => {
-      textEl.textContent += text.charAt(i);
-      i++;
-      if (i >= text.length) {
-        clearInterval(typeInterval);
+    triggerRipple();
+    if (phase1) {
+      phase1.classList.add('opacity-0');
+    }
 
-        // After typing, show reference and then reveal the rest
-        setTimeout(() => {
-          if (verseRef) verseRef.classList.remove('opacity-0');
-        }, 500);
-
-        setTimeout(() => {
-          if (cursor) cursor.style.display = 'none';
-          if (revealGroup) {
-            revealGroup.classList.remove('hidden');
-            revealGroup.classList.add('flex');
-          }
-
-          // Auto-redirect after 10 seconds (10000ms)
-          setTimeout(enterPortal, 10000);
-        }, 1500);
+    setTimeout(() => {
+      if (phase2) {
+        phase2.classList.remove('opacity-0');
+        phase2.classList.remove('pointer-events-none');
       }
-    }, 60); // Speed of typing
-  }, 1000); // Initial delay before typing starts
+    }, 400);
+  }, 6500);
 }
 
 async function enterPortal() {
   const splash = document.getElementById('splash-screen');
-  const splashCard = splash.querySelector('.splash-card');
   const ambientCanvas = document.getElementById('ambient-canvas');
 
   // Trigger Sound Effect via Tone.js Context without background loop
@@ -100,9 +90,11 @@ async function enterPortal() {
   synth.triggerAttackRelease(["C3", "C4"], "2n");
 
   // Animate Splash Out and Canvas Expand
-  if (splashCard) {
-    splashCard.classList.add('exit-scale');
-  }
+  const phase1 = document.getElementById('intro-phase-1');
+  const phase2 = document.getElementById('intro-phase-2');
+  if (phase1) phase1.classList.add('exit-scale');
+  if (phase2) phase2.classList.add('exit-scale');
+
   splash.classList.add('opacity-0', 'pointer-events-none');
 
   if (ambientCanvas) {
