@@ -41,67 +41,53 @@
   >
     <div
       id="splash-screen"
-      onclick="enterPortal()"
-      class="fixed inset-0 z-[100] splash-container flex flex-col items-center justify-center transition-all duration-[700ms] ease-out overflow-hidden cursor-pointer"
+      class="fixed inset-0 z-[100] splash-container flex flex-col items-center justify-center transition-all duration-[700ms] ease-out overflow-hidden"
     >
       <div class="absolute inset-0 god-rays pointer-events-none z-0"></div>
       <canvas id="splash-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
+      <div class="absolute inset-0 overflow-hidden pointer-events-none z-10" id="ripple-layer"></div>
 
-      <!-- Conteúdo Celestial Flutuante -->
-      <div class="splash-card relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center w-full h-full justify-center py-4 sm:py-8">
-
-        <!-- Badge de Gratuidade (Aparece Imediatamente) -->
-        <div id="splash-badge" class="mb-4 sm:mb-10 opacity-0 transition-opacity duration-1000 ease-in-out">
+      <!-- Fase 1: Citação -->
+      <div id="intro-phase-1" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 opacity-0 transition-opacity duration-1000">
+        <div class="mb-4 sm:mb-10">
           <span class="inline-flex items-center px-4 py-1.5 rounded-full border border-sacred-700/40 bg-sacred-900/20 text-rose-300 text-[9px] sm:text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(159,18,57,0.3)] backdrop-blur-md text-center max-w-[90vw] leading-tight">
-            Iniciativa 100% Gratuita • Revolução Digital Católica
+            INICIATIVA 100% GRATUITA • REVOLUÇÃO DIGITAL CATÓLICA
           </span>
         </div>
-
-        <!-- Cruz Pulsante Superior (Opcional visual) -->
-        <div id="splash-cross" class="mb-2 sm:mb-6 opacity-0 transition-opacity duration-1000 ease-in-out">
+        <div class="mb-2 sm:mb-6">
           <i data-lucide="cross" class="w-6 h-6 sm:w-8 sm:h-8 text-gold-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]"></i>
         </div>
-
-        <!-- Epígrafe Bíblica (Máquina de Escrever) -->
         <div class="min-h-[50px] sm:min-h-[100px] w-full flex flex-col items-center justify-center mb-2 sm:mb-8 px-4">
-          <p class="font-garamond italic text-base sm:text-3xl text-gold-100/90 leading-relaxed drop-shadow-md max-w-3xl">
-            “<span id="typewriter-text"></span><span id="typewriter-cursor" class="typewriter-cursor"></span>”
-            <span id="verse-ref" class="text-[10px] sm:text-base text-gold-400/80 not-italic ml-2 opacity-0 transition-opacity duration-1000">(Jo 1, 5)</span>
+          <blockquote class="font-garamond italic text-base sm:text-3xl text-gold-100/90 leading-relaxed drop-shadow-md max-w-3xl">
+            “A luz resplandece nas trevas, e as trevas não a derrotaram.”
+            <cite class="text-[10px] sm:text-base text-gold-400/80 not-italic ml-2">(Jo 1, 5)</cite>
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- Fase 2: Título Principal -->
+      <div id="intro-phase-2" class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 opacity-0 transition-opacity duration-1000 pointer-events-none">
+        <!-- Título Principal -->
+        <h1 class="font-cinzel text-3xl sm:text-7xl lg:text-8xl font-black bg-[linear-gradient(to_bottom,#fef08a,#d97706)] bg-clip-text text-transparent drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] tracking-wide pt-2 pb-1 glow-diffusion" style="letter-spacing: 0.05em; line-height: 1.1;">
+          ALVORECER<br><span class="block mt-2">CATÓLICO</span>
+        </h1>
+
+        <!-- Manifesto -->
+        <div class="max-w-2xl px-2 mt-6 sm:mt-10 blur-to-focus" style="animation-delay: 0.3s;">
+          <p class="font-garamond text-sm sm:text-2xl text-[#EAE5D9] leading-snug sm:leading-relaxed drop-shadow-lg" style="letter-spacing: 0.02em;">
+            Um resgate monumental e interativo dos 2.000 anos de História, Magistério e Tradição da Santa Igreja Católica. Do sangue dos mártires à era digital, toda a riqueza da Fé ao alcance de todos.
           </p>
         </div>
 
-        <!-- Grupo de Revelação (Título, Manifesto, Botão) -->
-        <div id="splash-reveal-group" class="hidden flex-col items-center w-full space-y-3 sm:space-y-10">
-
-          <!-- Título Principal -->
-          <h1 class="font-cinzel text-3xl sm:text-7xl lg:text-8xl font-black bg-[linear-gradient(to_bottom,#fef08a,#d97706)] bg-clip-text text-transparent drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] tracking-wide pt-2 pb-1 glow-diffusion" style="letter-spacing: 0.05em; line-height: 1.1;">
-            Alvorecer Católico
-          </h1>
-
-          <!-- Divisor Elegante -->
-          <div class="w-full flex items-center justify-center blur-to-focus" style="animation-delay: 0.3s;">
-              <div class="w-48 h-px bg-gradient-to-r from-transparent via-gold-600/50 to-transparent"></div>
-          </div>
-
-          <!-- Manifesto -->
-          <div class="max-w-2xl px-2 blur-to-focus" style="animation-delay: 0.6s;">
-            <p class="font-garamond text-sm sm:text-2xl text-[#EAE5D9] leading-snug sm:leading-relaxed drop-shadow-lg" style="letter-spacing: 0.02em;">
-              Um resgate monumental e interativo dos 2.000 anos de História, Magistério e Tradição da Santa Igreja Católica. Do sangue dos mártires à era digital, toda a riqueza da Fé ao alcance de todos.
-            </p>
-          </div>
-
-          <!-- Crédito e Autoria -->
-          <div class="flex flex-col items-center blur-to-focus mt-2 sm:mt-0 pb-4 sm:pb-0" style="animation-delay: 0.9s;">
-            <p class="text-[8px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] font-semibold text-gold-600/70 mb-0.5 sm:mb-2">
-              Produzido e Idealizado por
-            </p>
-            <p class="font-cinzel font-black text-gold-400/90 text-[10px] sm:text-lg tracking-[0.2em] sm:tracking-[0.4em] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-              Victor Ladislau Viana
-            </p>
-          </div>
-
+        <!-- Crédito e Autoria -->
+        <div class="flex flex-col items-center blur-to-focus mt-8 sm:mt-12 pb-4 sm:pb-0" style="animation-delay: 0.6s;">
+          <span class="text-[8px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] font-semibold text-gold-600/70 mb-0.5 sm:mb-2">PRODUZIDO E IDEALIZADO POR</span>
+          <strong class="font-cinzel font-black text-gold-400/90 text-[10px] sm:text-lg tracking-[0.2em] sm:tracking-[0.4em] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">VICTOR LADISLAU VIANA</strong>
         </div>
 
+        <button id="btn-enter" onclick="enterPortal()" class="mt-10 px-8 py-4 rounded-full btn-celestial font-cinzel font-bold tracking-widest uppercase text-sm sm:text-base pointer-events-auto blur-to-focus" style="animation-delay: 0.9s;">
+          Entrar na Experiência
+        </button>
       </div>
     </div>
 
