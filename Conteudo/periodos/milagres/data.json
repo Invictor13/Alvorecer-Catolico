@@ -1,44 +1,44 @@
 [
-  {
-    "id": 1,
-    "year": "750 d.C.",
-    "century": "media",
-    "title": "Milagre Eucarístico de Lanciano",
-    "era": "Eucarístico",
-    "ccc": "CIC § 1374",
-    "region": "Lanciano, Itália",
-    "coords": [
-      42.2278,
-      14.3892
-    ],
-    "zoom": 6,
-    "overview": "Sacerdote duvidou da Presença Real. A Hóstia converteu-se em Carne Sangrenta e o Vinho em Sangue verdadeiro.",
-    "theology": "Confirmação visível do Dogma da Transubstanciação. Exames científicos comprovam tecido miocárdico humano (Grupo AB).",
-    "quote": "«Eis a Carne e o Sangue do nosso diletíssimo Cristo, gerado para a nossa Salvação!»",
-    "figures": "Monge Basiliano anônimo, Cientista Linoli (Análises 1971).",
-    "artTitle": "O Relicário de Prata e Cristal de Lanciano",
-    "artDesc": "O ostensório sagrado onde estão preservadas as espécies milagrosas incorruptas.",
-    "routes": []
-  },
-  {
-    "id": 2,
-    "year": "1917 d.C.",
-    "century": "contemporanea",
-    "title": "Nossa Senhora de Fátima",
-    "era": "Aparição Mariana",
-    "ccc": "CIC § 67",
-    "region": "Fátima, Portugal",
-    "coords": [
-      39.6172,
-      -8.6521
-    ],
-    "zoom": 6,
-    "overview": "A Virgem Maria aparece a três pastorinhos na Cova da Iria. No dia 13 de Outubro ocorreu o Milagre do Sol para 70.000 testemunhas.",
-    "theology": "Apelo à oração do Santo Rosário, reparação ao Imaculado Coração e conversão dos pecadores.",
-    "quote": "«Por fim, o Meu Imaculado Coração triunfará!» — Nossa Senhora de Fátima",
-    "figures": "Lúcia dos Santos, São Francisco Marto, Santa Jacinta Marto.",
-    "artTitle": "O Santuário da Cova da Iria",
-    "artDesc": "A Capelinha das Aparições e o Sol Dançante testemunhado pelos jornais da época.",
-    "routes": []
-  }
+    {
+        "id": 1,
+        "year": "750 d.C.",
+        "century": "media",
+        "title": "Milagre Eucarístico de Lanciano",
+        "era": "Eucarístico",
+        "ccc": "CIC § 1374",
+        "region": "Lanciano, Itália",
+        "coords": [
+            42.2278,
+            14.3892
+        ],
+        "zoom": 6,
+        "overview": "Sacerdote duvidou da Presença Real. A Hóstia converteu-se em Carne Sangrenta e o Vinho em Sangue verdadeiro.",
+        "theology": "Confirmação visível do Dogma da Transubstanciação. Exames científicos comprovam tecido miocárdico humano (Grupo AB).",
+        "quote": "«Eis a Carne e o Sangue do nosso diletíssimo Cristo, gerado para a nossa Salvação!»",
+        "figures": "Monge Basiliano anônimo, Cientista Linoli (Análises 1971).",
+        "artTitle": "O Relicário de Prata e Cristal de Lanciano",
+        "artDesc": "O ostensório sagrado onde estão preservadas as espécies milagrosas incorruptas.",
+        "routes": []
+    },
+    {
+        "id": 2,
+        "year": "1917 d.C.",
+        "century": "contemporanea",
+        "title": "Nossa Senhora de Fátima",
+        "era": "Aparição Mariana",
+        "ccc": "CIC § 67",
+        "region": "Fátima, Portugal",
+        "coords": [
+            39.6172,
+            -8.6521
+        ],
+        "zoom": 6,
+        "overview": "A Virgem Maria aparece a três pastorinhos na Cova da Iria. No dia 13 de Outubro ocorreu o Milagre do Sol para 70.000 testemunhas.",
+        "theology": "Apelo à oração do Santo Rosário, reparação ao Imaculado Coração e conversão dos pecadores.",
+        "quote": "«Por fim, o Meu Imaculado Coração triunfará!» — Nossa Senhora de Fátima",
+        "figures": "Lúcia dos Santos, São Francisco Marto, Santa Jacinta Marto.",
+        "artTitle": "O Santuário da Cova da Iria",
+        "artDesc": "A Capelinha das Aparições e o Sol Dançante testemunhado pelos jornais da época.",
+        "routes": []
+    }
 ]

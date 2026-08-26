@@ -1,655 +1,721 @@
-import { initThreeAmbient, updateParticleColor } from './animations/particles-sacro.js';
-import { initLeafletMap } from './modos/mapa-mundi/mapa.js';
-import { fetchEras, loadTimelineStage, selectTimelineEra } from './modos/linha-do-tempo/timeline.js';
-import { findNearbyChurches } from './modos/paroquias/paroquias.js';
+let datasets = {
+    igreja: [],
+    santos: [],
+    concilios: [],
+    milagres: []
+};
 
-let dataModules = {};
-let sidebarOpen = false;
-let audioSynth = null;
-let audioReverb = null;
+let quizQuestions = [];
+let flashcards = [];
+
+let currentLang = 'pt';
+let currentCategory = 'igreja';
+let historicalEpochs = [];
+let filteredEpochs = [];
+let currentEpochIndex = 0;
+let map = null;
+let currentMarker = null;
+let routeLayers = [];
+let isPlaying = false;
+let playInterval = null;
 let isAudioPlaying = false;
+let audioCtx = null;
+let sidebarVisible = true;
+let currentQuizIndex = 0;
+let quizScore = 0;
+let currentFlashcardIdx = 0;
+let favorites = JSON.parse(localStorage.getItem('ecclesia_favs') || '[]');
 
-async function init() {
-  try {
-    const res = await fetch('./Conteudo/periodos/modules.json');
-    dataModules = await res.json();
-  } catch(e) {
-    console.error("Failed to load modules.json", e);
-  }
-  await fetchEras();
-
-  if(localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
-    document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
-  }
-
-  renderSidebarLevel1();
-  loadDailyLiturgy();
-
-  // Initialize canvas for both splash (if exists) and ambient
-  if (document.getElementById('splash-canvas')) {
-    initThreeAmbient('splash-canvas', true);
-  }
-  initThreeAmbient('ambient-canvas', false);
-
-  lucide.createIcons();
-
-  runIntroSequence();
-}
-
-function triggerRipple() {
-  const rippleLayer = document.getElementById('ripple-layer');
-  if (!rippleLayer) return;
-  const ripple = document.createElement('div');
-  ripple.className = 'water-ripple';
-  rippleLayer.appendChild(ripple);
-  // Match removal with the new 3.5s animation duration from CSS
-  setTimeout(() => ripple.remove(), 3600);
-}
-
-function runIntroSequence() {
-  const phase1 = document.getElementById('intro-phase-1');
-  const phase2 = document.getElementById('intro-phase-2');
-
-  // Gota 1 -> Fase 1
-  setTimeout(() => {
-    triggerRipple();
-    if (phase1) {
-      phase1.classList.remove('opacity-0');
+const translations = {
+    pt: {
+        welcomeSub: "O mapa histórico, teológico e cultural definitivo da Santa Igreja Católica. Explore séculos de fé, milagres, magistério e vida dos santos.",
+        menuBtn: "Menu Principal", quizBtn: "Quiz", codiceBtn: "Códice", filterTitle: "Filtrar por Século",
+        btnPrev: "Anterior", btnNext: "Próximo", play: "Reproduzir", pause: "Pausar", verMais: "Códice Magna",
+        panorama: "Panorama Histórico", theology: "Teologia & CIC", artGallery: "Galeria de Arte Sacra Georreferenciada",
+        figures: "Figuras Chave e Testemunhas", prevChap: "Capítulo Anterior", nextChap: "Próximo Capítulo"
+    },
+    la: {
+        welcomeSub: "Tabula historica, theologica et culturalis Sanctae Ecclesiae Catholicae. Explora saecula fidei, miracula et vitas sanctorum.",
+        menuBtn: "Menu Principale", quizBtn: "Quaestiones", codiceBtn: "Codex", filterTitle: "Colatoria Saeculi",
+        btnPrev: "Prior", btnNext: "Sequens", play: "Ludere", pause: "Pausare", verMais: "Codex Magna",
+        panorama: "Panorama Historicum", theology: "Theologia & CIC", artGallery: "Galeria Artis Sacrae",
+        figures: "Personae Insignes", prevChap: "Caput Prius", nextChap: "Caput Sequens"
+    },
+    en: {
+        welcomeSub: "The definitive historical, theological, and cultural map of the Holy Catholic Church. Explore centuries of faith, miracles, and saints.",
+        menuBtn: "Main Menu", quizBtn: "Quiz", codiceBtn: "Codex", filterTitle: "Filter by Century",
+        btnPrev: "Previous", btnNext: "Next", play: "Play", pause: "Pause", verMais: "Magna Codex",
+        panorama: "Historical Overview", theology: "Theology & CCC", artGallery: "Georeferenced Sacred Art",
+        figures: "Key Figures & Witnesses", prevChap: "Previous Chapter", nextChap: "Next Chapter"
+    },
+    es: {
+        welcomeSub: "El mapa histórico, teológico y cultural definitivo de la Santa Iglesia Católica. Explora siglos de fe, milagros y vidas de santos.",
+        menuBtn: "Menú Principal", quizBtn: "Quiz", codiceBtn: "Códice", filterTitle: "Filtrar por Siglo",
+        btnPrev: "Anterior", btnNext: "Siguiente", play: "Reproducir", pause: "Pausar", verMais: "Códice Magna",
+        panorama: "Panorama Histórico", theology: "Teología y CIC", artGallery: "Galería de Arte Sacro",
+        figures: "Figuras Clave y Testigos", prevChap: "Capítulo Anterior", nextChap: "Siguiente Capítulo"
+    },
+    it: {
+        welcomeSub: "Il mappa storico, teologico e culturale definitivo della Santa Chiesa Cattolica. Esplora secoli di fede, miracoli e vita dei santi.",
+        menuBtn: "Menù Principale", quizBtn: "Quiz", codiceBtn: "Codice", filterTitle: "Filtra per Secolo",
+        btnPrev: "Precedente", btnNext: "Successivo", play: "Riproduci", pause: "Pausa", verMais: "Codice Magna",
+        panorama: "Panoramica Storica", theology: "Teologia e CCC", artGallery: "Galleria d'Arte Sacra",
+        figures: "Figure Chiave e Testimoni", prevChap: "Capitolo Precedente", nextChap: "Capitolo Successivo"
     }
-  }, 1500);
-
-  // Gota 2 -> Fase 2
-  setTimeout(() => {
-    triggerRipple();
-    if (phase1) {
-      phase1.classList.add('opacity-0');
-    }
-
-    setTimeout(() => {
-      if (phase2) {
-        phase2.classList.remove('opacity-0');
-        phase2.classList.remove('pointer-events-none');
-      }
-    }, 400);
-  }, 6500);
-}
-
-async function enterPortal() {
-  const splash = document.getElementById('splash-screen');
-  const ambientCanvas = document.getElementById('ambient-canvas');
-
-  // Trigger Sound Effect via Tone.js Context without background loop
-  if(Tone.context.state !== 'running') {
-    await Tone.start();
-  }
-  const synth = new Tone.PolySynth(Tone.FMSynth, {
-    envelope: { attack: 0.1, decay: 2, sustain: 0.2, release: 2 }
-  }).toDestination();
-  synth.volume.value = -15;
-  synth.triggerAttackRelease(["C3", "C4"], "2n");
-
-  // Animate Splash Out and Canvas Expand
-  const phase1 = document.getElementById('intro-phase-1');
-  const phase2 = document.getElementById('intro-phase-2');
-  if (phase1) phase1.classList.add('exit-scale');
-  if (phase2) phase2.classList.add('exit-scale');
-
-  splash.classList.add('opacity-0', 'pointer-events-none');
-
-  if (ambientCanvas) {
-    ambientCanvas.style.transition = 'transform 3s cubic-bezier(0.16, 1, 0.3, 1)';
-    ambientCanvas.style.transform = 'scale(1.05)';
-  }
-
-  if (splash) {
-    splash.classList.add('opacity-0');
-    setTimeout(() => {
-      splash.remove();
-    }, 1000);
-  }
-}
-
-const sidebarGroups = {
-  eras_historicas: {
-    icon: 'clock',
-    title: 'Eras Históricas',
-    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/The_delivery_of_the_keys_to_Saint_Peter_by_Pietro_Perugino.jpg/800px-The_delivery_of_the_keys_to_Saint_Peter_by_Pietro_Perugino.jpg',
-    tag: 'Séc. I ao XXI'
-  },
-  estudos_biblicos: {
-    icon: 'book-open',
-    title: 'Estudos Bíblicos',
-    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gutenberg_Bible_B42_Deutsches_Buch_und_Schriftmuseum.jpg/800px-Gutenberg_Bible_B42_Deutsches_Buch_und_Schriftmuseum.jpg',
-    tag: 'Sagradas Escrituras'
-  },
-  doutores_santos: {
-    icon: 'crown',
-    title: 'Doutores & Santos',
-    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg/800px-Philippe_de_Champaigne_-_Saint_Augustine_-_WGA04712.jpg',
-    tag: 'Mestres da Fé'
-  },
-  milagres_reliquias: {
-    icon: 'sparkles',
-    title: 'Milagres & Relíquias',
-    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Lanciano_Reliquary.jpg/800px-Lanciano_Reliquary.jpg',
-    tag: 'Sobrenatural'
-  },
-  paroquias_rotas: {
-    icon: 'map-pin',
-    title: 'Paróquias & Rotas',
-    bgImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/1570_Ortelius_Map_of_the_World_-_Typus_Orbis_Terrarum_-_Geographicus_-_World-ortelius-1570.jpg/800px-1570_Ortelius_Map_of_the_World_-_Typus_Orbis_Terrarum_-_Geographicus_-_World-ortelius-1570.jpg',
-    tag: 'Geografia Sagrada'
-  }
 };
 
-let currentLevel2Group = null;
-
-function renderSidebarLevel1() {
-  const container = document.getElementById('sidebar-level-1');
-  let html = '';
-
-  for (let [key, group] of Object.entries(sidebarGroups)) {
-    // Determine items for this group
-    const itemsCount = Object.values(dataModules).filter(item => item.category === key).length;
-
-    html += `
-      <div class="sidebar-group cursor-pointer group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all duration-300"
-           data-group="${key}"
-           onclick="openSidebarLevel2('${key}')">
-
-        <!-- Background Image with Overlay -->
-        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${group.bgImage}')"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/20 group-hover:via-slate-900/40 transition-colors"></div>
-
-        <!-- Border Glow Effect -->
-        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 border-2 border-gold-400/50 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
-
-        <!-- Content -->
-        <div class="relative z-10 p-4 h-32 flex flex-col justify-between">
-          <div class="flex justify-between items-start">
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-black/40 text-gold-400 backdrop-blur-md border border-white/10">
-              ${group.tag}
-            </span>
-            <i data-lucide="${group.icon}" class="w-5 h-5 text-white/70 group-hover:text-gold-400 transition-colors"></i>
-          </div>
-
-          <div>
-            <h3 class="font-cinzel font-bold text-lg text-white group-hover:text-gold-200 transition-colors drop-shadow-md">${group.title}</h3>
-            <p class="text-xs text-slate-300 font-medium">${itemsCount} Registros</p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  container.innerHTML = html;
-  lucide.createIcons();
-}
-
-function openSidebarLevel2(groupKey) {
-  const group = sidebarGroups[groupKey];
-  if (!group) return;
-
-  currentLevel2Group = groupKey;
-
-  // Header
-  document.getElementById('lvl2-cover').style.backgroundImage = `url('${group.bgImage}')`;
-  document.getElementById('lvl2-title').innerText = group.title;
-
-  const items = Object.entries(dataModules).filter(([id, item]) => item.category === groupKey);
-  document.getElementById('lvl2-count').innerText = `${items.length} itens`;
-
-  // Search Reset
-  document.getElementById('lvl2-search').value = '';
-
-  renderSidebarLevel2Items(items);
-
-  // Transition slider
-  document.getElementById('sidebar-slider').classList.add('-translate-x-full');
-
-  // Specific interaction: load map immediately if Paróquias & Rotas is clicked
-  if (groupKey === 'paroquias_rotas') {
-    hideAllStages();
-    const stage = document.getElementById('content-stage');
-    stage.classList.remove('hidden');
-    // We can initialize an empty or default map for Paróquias & Rotas
-    // or call initLeafletMap with default world coordinates
-    setTimeout(() => initLeafletMap([41.9028, 12.4964], 2, []), 100);
-  }
-}
-
-function backToLevel1() {
-  document.getElementById('sidebar-slider').classList.remove('-translate-x-full');
-  currentLevel2Group = null;
-}
-
-function renderSidebarLevel2Items(itemsEntries) {
-  const container = document.getElementById('sidebar-level-2-items');
-
-  if (itemsEntries.length === 0) {
-    container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Nenhum item encontrado.</p>';
-    lucide.createIcons();
-    return;
-  }
-
-  let html = itemsEntries.map(([id, item]) => {
-    const hasAudio = false; // Mock for now, could be added to data
-    const hasMap = item.mapCenter && item.mapCenter.length > 0;
-
-    return `
-    <button onmouseenter="window.previewSidebarItem('${id}')" onclick="window.loadFullContent('${id}')" class="w-full text-left p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/80 transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-600 group flex items-start gap-3">
-      <!-- Avatar -->
-      <div class="w-10 h-10 rounded-full flex-shrink-0 bg-slate-200 dark:bg-slate-700 overflow-hidden border border-slate-300 dark:border-slate-600">
-        ${item.avatar ? `<img src="${item.avatar}" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-4 h-4 text-slate-400"></i></div>`}
-      </div>
-
-      <!-- Text -->
-      <div class="flex-1 min-w-0">
-        <h4 class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors truncate">${item.title}</h4>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">${item.description}</p>
-
-        <!-- Media Indicators -->
-        <div class="flex items-center gap-2 mt-1.5 opacity-60">
-          ${hasMap ? '<i data-lucide="map-pin" class="w-3 h-3 text-sacred-600 dark:text-rose-400"></i>' : ''}
-          <i data-lucide="file-text" class="w-3 h-3 text-slate-500"></i>
-        </div>
-      </div>
-    </button>
-  `}).join('');
-
-  container.innerHTML = html;
-  lucide.createIcons();
-}
-
-function handleLevel2Search() {
-  const query = document.getElementById('lvl2-search').value.toLowerCase();
-
-  if (!currentLevel2Group) return;
-
-  const items = Object.entries(dataModules).filter(([id, item]) => {
-    if (item.category !== currentLevel2Group) return false;
-
-    return item.title.toLowerCase().includes(query) ||
-           item.description.toLowerCase().includes(query) ||
-           (item.saints && item.saints.some(s => s.name.toLowerCase().includes(query)));
-  });
-
-  renderSidebarLevel2Items(items);
-}
-
-
-async function toggleAudio() {
-  const btn = document.getElementById('btn-audio');
-
-  if(!audioSynth) {
-    await Tone.start();
-    audioReverb = new Tone.Reverb({ decay: 10, preDelay: 0.1 }).toDestination();
-    audioSynth = new Tone.PolySynth(Tone.FMSynth, {
-      harmonicity: 1, modulationIndex: 1,
-      oscillator: { type: "sine" },
-      envelope: { attack: 2, decay: 2, sustain: 0.8, release: 4 },
-      modulation: { type: "triangle" }
-    }).connect(audioReverb);
-    audioSynth.volume.value = -20;
-  }
-
-  if(isAudioPlaying) {
-    audioSynth.releaseAll();
-    isAudioPlaying = false;
-    btn.classList.remove('text-marian-700', 'dark:text-gold-400');
-  } else {
-    const notes = ["C3", "G3", "C4", "F4"];
-    audioSynth.triggerAttack(notes);
-    isAudioPlaying = true;
-    btn.classList.add('text-marian-700', 'dark:text-gold-400');
-
-    setInterval(() => {
-      if(!isAudioPlaying) return;
-      if(Math.random() > 0.5) {
-         audioSynth.triggerRelease(["F4"]);
-         setTimeout(() => audioSynth.triggerAttack(["E4"]), 1000);
-      } else {
-         audioSynth.triggerRelease(["E4"]);
-         setTimeout(() => audioSynth.triggerAttack(["F4"]), 1000);
-      }
-    }, 8000);
-  }
-}
-
-window.playEraSound = function(index) {
-  if (!isAudioPlaying || !audioSynth) return;
-  // Toca um badalar suave para marcar a transição de era
-  const bellSynth = new Tone.MetalSynth({
-    frequency: 200,
-    envelope: { attack: 0.001, decay: 1.4, release: 0.2 },
-    harmonicity: 5.1,
-    modulationIndex: 32,
-    resonance: 4000,
-    octaves: 1.5
-  }).toDestination();
-
-  bellSynth.volume.value = -10;
-
-  // Varia levemente a nota com base no index
-  const notes = ["C4", "E4", "G4", "B4"];
-  const note = notes[index % notes.length];
-
-  bellSynth.triggerAttackRelease(note, "1n");
-};
-
-function previewSidebarItem(key) {
-  if (document.getElementById('book-stage').classList.contains('hidden') === false) return;
-
-  const item = dataModules[key];
-  if (!item) return;
-
-  hideAllStages();
-  document.getElementById('preview-stage').classList.remove('hidden');
-
-  document.getElementById('preview-category-tag').innerText = `${item.categoryName} • ${item.period}`;
-  document.getElementById('preview-title').innerText = item.title;
-  document.getElementById('preview-description').innerText = item.description;
-  document.getElementById('preview-highlights').innerText = item.highlights;
-  document.getElementById('preview-saints-summary').innerText = (item.saints || []).map(s=>s.name).join(', ');
-  document.getElementById('preview-cta-btn').onclick = () => window.loadFullContent(key);
-
-  updateParticleColor(item.color);
-  if(window.innerWidth < 1024 && sidebarOpen) toggleSidebar();
-}
-
-function loadFullContent(key) {
-  const item = dataModules[key];
-  if (!item) return;
-
-  hideAllStages();
-  const stage = document.getElementById('book-stage');
-  stage.classList.remove('hidden');
-
-  // Reset Book Cover
-  const cover = stage.querySelector('.book-cover');
-  if(cover) cover.classList.remove('open');
-
-  // Update Cover
-  const coverTitle = document.getElementById('book-cover-title');
-  if(coverTitle) coverTitle.innerText = item.title;
-
-  // Update Content
-  const cat = document.getElementById('book-category');
-  if(cat) cat.innerText = item.categoryName;
-
-  const per = document.getElementById('book-period');
-  if(per) per.innerText = item.period;
-
-  const title = document.getElementById('book-title');
-  if(title) title.innerText = item.title;
-
-  const desc = document.getElementById('book-description');
-  if(desc) desc.innerText = item.description;
-
-  const quote = document.getElementById('book-quote');
-  if(quote) quote.innerText = item.quote;
-
-  const secular = document.getElementById('book-secular');
-  if(secular) secular.innerText = item.secular;
-
-  const img = document.getElementById('book-image');
-  if (item.image && img) {
-    img.src = item.image;
-  }
-
-  const saintsContainer = document.getElementById('book-saints');
-  if(saintsContainer) {
-      saintsContainer.innerHTML = (item.saints || []).map(s => `
-        <span class="block mb-1 font-bold text-sacred-800 dark:text-[#7a1c1c]">${s.name}</span>
-        <span class="block text-[10px] mb-2">${s.role} - ${s.detail}</span>
-      `).join('');
-  }
-
-  // Store current item globally for flyToGlobe
-  window.currentActiveItem = item;
-
-  lucide.createIcons();
-
-  updateParticleColor(item.color);
-  if(window.innerWidth < 1024 && sidebarOpen) toggleSidebar();
-}
-
-function flyToItemGlobe() {
-  if (!window.currentActiveItem || !window.currentActiveItem.mapCenter) return;
-  hideAllStages();
-  document.getElementById('timeline-map-stage').classList.remove('hidden');
-  import('./modos/mapa-mundi/mapa.js').then(module => {
-    module.updateGiantMap(window.currentActiveItem.mapCenter, 6, window.currentActiveItem, true);
-  });
-}
-
-function openBook() {
-  const cover = document.querySelector('.book-cover');
-  if(cover && !cover.classList.contains('open')) {
-    cover.classList.add('open');
-    playBookOpenSound();
-  }
-}
-
-function playBookOpenSound() {
-  if (typeof Tone === 'undefined') return;
-  // Synthesize a deep thud for the heavy leather cover
-  const thud = new Tone.MembraneSynth({
-    pitchDecay: 0.1,
-    octaves: 2,
-    oscillator: { type: "sine" },
-    envelope: { attack: 0.01, decay: 0.4, sustain: 0.01, release: 0.5 }
-  }).toDestination();
-  thud.volume.value = -10;
-
-  // Synthesize a rustle for the pages
-  const noise = new Tone.NoiseSynth({
-    noise: { type: "brown" },
-    envelope: { attack: 0.05, decay: 0.2, sustain: 0, release: 0.1 }
-  }).toDestination();
-  noise.volume.value = -20;
-
-  // Requires user interaction, so we wrap it just in case
-  try {
-      if(Tone.context.state !== 'running') {
-          Tone.start();
-      }
-      thud.triggerAttackRelease("C2", "8n");
-      setTimeout(() => noise.triggerAttackRelease("16n"), 200);
-  } catch(e) {
-      console.warn("Audio context could not start.", e);
-  }
-}
-
-
-function resetToAmbient() {
-  hideAllStages();
-  document.getElementById('ambient-stage').classList.remove('hidden');
-  updateParticleColor(0x2563eb);
-}
-
-function hideAllStages() {
-  ['ambient-stage', 'timeline-map-stage', 'preview-stage', 'content-stage', 'book-stage'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.classList.add('hidden');
-  });
-}
-
-function openModal(id) {
-  document.getElementById(id).classList.add('active');
-}
-
-function closeModal(event, id) {
-  if(event) event.stopPropagation();
-  document.getElementById(id).classList.remove('active');
-}
-
-function handleSearch() {
-  const query = document.getElementById('search-input').value.toLowerCase();
-  const resultsContainer = document.getElementById('search-results');
-  if (query.length < 2) {
-    resultsContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Digite para pesquisar no acervo...</p>';
-    return;
-  }
-
-  const results = Object.entries(dataModules).filter(([key, item]) => {
-    return item.title.toLowerCase().includes(query) ||
-           item.description.toLowerCase().includes(query) ||
-           (item.saints && item.saints.some(s => s.name.toLowerCase().includes(query)));
-  });
-
-  if (results.length === 0) {
-    resultsContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Nenhum resultado encontrado.</p>';
-    return;
-  }
-
-  resultsContainer.innerHTML = results.map(([key, item]) => `
-    <div onclick="window.loadFullContent('${key}'); window.closeModal(null, 'search-modal')" class="p-3 mb-2 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer transition-colors border border-slate-200 dark:border-slate-700">
-      <div class="text-sm font-bold text-slate-900 dark:text-white">${item.title}</div>
-      <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">${item.description}</div>
-    </div>
-  `).join('');
-}
-
-function toggleDarkMode() {
-  const html = document.documentElement;
-  const themeIcon = document.getElementById('theme-icon');
-
-  if (html.classList.contains('dark')) {
-    html.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
-    themeIcon.setAttribute('data-lucide', 'moon');
-  } else {
-    html.classList.add('dark');
-    localStorage.setItem('theme', 'dark');
-    themeIcon.setAttribute('data-lucide', 'sun');
-  }
-  lucide.createIcons();
-}
-
-function loadDailyLiturgy() {
-  const now = new Date();
-  const options = { weekday: 'long', day: 'numeric', month: 'long' };
-  const dateStr = now.toLocaleDateString('pt-BR', options).toUpperCase();
-
-  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-
-  const verses = [
-    {
-      title: "Evangelho (João 14, 6)",
-      text: "Disse-lhe Jesus: 'Eu sou o caminho, a verdade e a vida; ninguém vem ao Pai, senão por mim.'",
-      homily: "Neste trecho profundo do Evangelho de São João, Cristo não se apresenta apenas como um mestre que aponta uma direção, mas como o próprio Caminho encarnado..."
-    },
-    {
-      title: "Evangelho (Mateus 5, 14)",
-      text: "Vós sois a luz do mundo; não se pode esconder uma cidade edificada sobre um monte.",
-      homily: "A vocação do cristão não é o isolamento, mas a irradiação. Assim como uma lâmpada não é acesa para ser colocada debaixo de uma cama, a graça que recebemos..."
-    },
-    {
-      title: "Salmo 23, 1-2",
-      text: "O Senhor é o meu pastor, nada me faltará. Deitar-me faz em verdes pastos, guia-me mansamente a águas tranquilas.",
-      homily: "O salmista Davi expressa, nestes versos, a mais profunda confiança na Providência Divina. Reconhecer Deus como Pastor significa aceitar a Sua condução diária..."
-    },
-    {
-      title: "Evangelho (Lucas 1, 46-47)",
-      text: "A minha alma engrandece ao Senhor, e o meu espírito se alegra em Deus meu Salvador.",
-      homily: "O canto do Magnificat é a expressão máxima da humildade exaltada. Maria Santíssima reconhece prontamente que toda a sua grandeza provém unicamente da graça imerecida de Deus..."
+async function loadData() {
+    try {
+        const [igrejaRes, santosRes, conciliosRes, milagresRes, quizRes, flashcardsRes] = await Promise.all([
+            fetch('./Conteudo/periodos/igreja/data.json'),
+            fetch('./Conteudo/periodos/santos/data.json'),
+            fetch('./Conteudo/periodos/concilios/data.json'),
+            fetch('./Conteudo/periodos/milagres/data.json'),
+            fetch('./Conteudo/periodos/estudos/quiz.json'),
+            fetch('./Conteudo/periodos/estudos/flashcards.json')
+        ]);
+
+        datasets.igreja = await igrejaRes.json();
+        datasets.santos = await santosRes.json();
+        datasets.concilios = await conciliosRes.json();
+        datasets.milagres = await milagresRes.json();
+        quizQuestions = await quizRes.json();
+        flashcards = await flashcardsRes.json();
+
+        // Initialize state after data load
+        historicalEpochs = datasets.igreja;
+        filteredEpochs = historicalEpochs;
+    } catch (error) {
+        console.error("Error loading JSON data:", error);
     }
-  ];
+}
 
-  const reading = verses[dayOfYear % verses.length];
+function initMap() {
+    map = L.map('map', {
+        center: [30, 20],
+        zoom: 3,
+        zoomControl: true,
+        attributionControl: false
+    });
 
-  const homeDate = document.getElementById('home-liturgy-date');
-  if(homeDate) homeDate.innerText = dateStr;
+    setMapStyle('dark');
+    buildModalChapters();
+    updateEpoch(0);
+    updateFavoritesUI();
+}
 
-  const homeTitle = document.getElementById('home-liturgy-title');
-  if(homeTitle) homeTitle.innerText = reading.title;
+let tileLayerInstance = null;
+function setMapStyle(styleKey) {
+    if (tileLayerInstance) map.removeLayer(tileLayerInstance);
 
-  const homeSnippet = document.getElementById('home-liturgy-snippet');
-  if(homeSnippet) homeSnippet.innerText = `"${reading.text}"`;
+    let url = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    if (styleKey === 'parchment') {
+        url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    } else if (styleKey === 'satellite') {
+        url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    }
 
-  const modalDate = document.getElementById('modal-liturgy-date');
-  if(modalDate) modalDate.innerText = dateStr;
+    tileLayerInstance = L.tileLayer(url, { maxZoom: 18, subdomains: 'abcd' }).addTo(map);
+    document.getElementById('map-style-menu').classList.add('hidden');
+}
 
-  const modalTitle = document.getElementById('modal-liturgy-title');
-  if(modalTitle) modalTitle.innerText = reading.title;
+function toggleMapStyleMenu() {
+    document.getElementById('map-style-menu').classList.toggle('hidden');
+}
 
-  const modalText = document.getElementById('modal-liturgy-text');
-  if(modalText) modalText.innerText = reading.text;
+function selectCategory(categoryKey) {
+    currentCategory = categoryKey;
+    historicalEpochs = datasets[categoryKey] || [];
+    filteredEpochs = historicalEpochs;
+    currentEpochIndex = 0;
 
-  const modalHomily = document.getElementById('modal-liturgy-homily');
-  if(modalHomily) modalHomily.innerText = reading.homily;
+    document.getElementById('welcome-portal').classList.add('hidden');
+    document.getElementById('timeline-slider').max = Math.max(0, filteredEpochs.length - 1);
+    document.getElementById('timeline-slider').value = 0;
+
+    const titles = {
+        igreja: "Alvorecer Católico — História da Igreja Católica",
+        santos: "Alvorecer Católico — Biografia e Teologia dos Santos",
+        concilios: "Alvorecer Católico — Magistério dos Concílios Ecumênicos",
+        milagres: "Alvorecer Católico — Sinais, Milagres Eucarísticos e Aparições"
+    };
+    document.getElementById('modal-main-title').innerText = titles[categoryKey] || "Alvorecer Católico";
+
+    if (!map) initMap();
+    else {
+        buildModalChapters();
+        updateEpoch(0);
+    }
+}
+
+function openWelcomeMenu() {
+    pauseStory();
+    document.getElementById('welcome-portal').classList.remove('hidden');
+}
+
+function updateEpoch(index) {
+    if (index < 0 || index >= filteredEpochs.length) return;
+    currentEpochIndex = index;
+    const epoch = filteredEpochs[currentEpochIndex];
+
+    if (!epoch || !epoch.coords || typeof epoch.coords[0] !== 'number' || typeof epoch.coords[1] !== 'number') return;
+
+    // Update Bottom HUD
+    document.getElementById('epoch-era').innerText = epoch.era;
+    document.getElementById('epoch-year').innerText = epoch.year;
+    document.getElementById('epoch-title').innerText = epoch.title;
+    document.getElementById('epoch-region').innerText = epoch.region;
+    document.getElementById('epoch-desc').innerText = epoch.overview;
+    document.getElementById('epoch-ccc').innerText = epoch.ccc || 'CIC § 767';
+    document.getElementById('epoch-counter').innerText = `${currentEpochIndex + 1} / ${filteredEpochs.length}`;
+    document.getElementById('timeline-slider').value = currentEpochIndex;
+
+    // Update Modal Reader
+    document.getElementById('modal-epoch-year').innerText = epoch.year;
+    document.getElementById('modal-epoch-era').innerText = epoch.era;
+    document.getElementById('modal-epoch-ccc-badge').innerText = epoch.ccc || 'CIC § 767';
+    document.getElementById('modal-epoch-title').innerText = epoch.title;
+    document.getElementById('modal-epoch-region').innerText = epoch.region;
+    document.getElementById('modal-epoch-overview').innerText = epoch.overview;
+    document.getElementById('modal-epoch-theology').innerText = epoch.theology;
+    document.getElementById('modal-epoch-quote').innerText = epoch.quote || '';
+    document.getElementById('modal-epoch-figures').innerText = epoch.figures;
+    document.getElementById('modal-art-title').innerText = epoch.artTitle;
+    document.getElementById('modal-art-desc').innerText = epoch.artDesc;
+
+    // Check favorite state
+    updateFavoriteButtonState();
+
+    // Clear Old Markers & Routes
+    if (currentMarker) map.removeLayer(currentMarker);
+    routeLayers.forEach(l => map.removeLayer(l));
+    routeLayers = [];
+
+    // Category Icons Badge Mapping
+    const categoryIcons = {
+        igreja: 'fa-landmark-dome',
+        santos: 'fa-user-shield',
+        concilios: 'fa-scroll',
+        milagres: 'fa-hand-holding-heart'
+    };
+    const currentIconClass = categoryIcons[currentCategory] || 'fa-cross';
+
+    const customIcon = L.divIcon({
+        className: 'custom-leaflet-marker',
+        html: `<div style="position:relative; width:44px; height:44px; display:flex; align-items:center; justify-content:center;">
+                 <div style="position:absolute; width:44px; height:44px; background:rgba(245,158,11,0.4); border-radius:50%; animation: pulse-ring 2.5s infinite;"></div>
+                 <div style="width:28px; height:28px; background:linear-gradient(135deg, #f59e0b, #b45309); border:2px solid #ffffff; border-radius:50%; box-shadow:0 0 20px #f59e0b; display:flex; align-items:center; justify-content:center; color:#030712; font-size:13px;">
+                    <i class="fa-solid ${currentIconClass}"></i>
+                 </div>
+               </div>`,
+        iconSize: [44, 44],
+        iconAnchor: [22, 22]
+    });
+
+    currentMarker = L.marker(epoch.coords, { icon: customIcon }).addTo(map);
+    currentMarker.bindPopup(`
+        <div style="font-family:'Inter',sans-serif; color:#111827; padding:4px;">
+            <strong style="font-family:'Cinzel',serif; font-size:14px; color:#b45309;">${epoch.title}</strong><br>
+            <span style="font-size:12px; font-weight:600; color:#4b5563;">${epoch.year} — ${epoch.region}</span>
+        </div>
+    `);
+
+    // Render Routes
+    if (epoch.routes && epoch.routes.length > 0) {
+        epoch.routes.forEach(route => {
+            if (!route.from || !route.to) return;
+            const line = L.polyline([route.from, route.to], {
+                color: '#f59e0b',
+                weight: 3.5,
+                opacity: 0.9,
+                dashArray: '8, 12',
+                className: 'animated-route'
+            }).addTo(map);
+            line.bindTooltip(route.label, { permanent: false, direction: 'top' });
+            routeLayers.push(line);
+
+            const destIcon = L.divIcon({
+                className: 'custom-dest-icon',
+                html: `<div style="width:14px; height:14px; background:#f59e0b; border:2px solid #ffffff; border-radius:50%; box-shadow:0 0 10px #f59e0b;"></div>`,
+                iconSize: [14, 14], iconAnchor: [7, 7]
+            });
+            const destMarker = L.marker(route.to, { icon: destIcon }).addTo(map);
+            routeLayers.push(destMarker);
+        });
+    }
+
+    map.flyTo(epoch.coords, epoch.zoom, { duration: 2.0, easeLinearity: 0.25 });
+    updateModalActiveCard();
+    triggerSacredSoundTransition();
+}
+
+function handleGlobalSearch(query) {
+    const dropdown = document.getElementById('search-results-dropdown');
+    const clearBtn = document.getElementById('search-clear-btn');
+
+    if (!query || query.trim().length < 2) {
+        dropdown.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+        return;
+    }
+
+    clearBtn.classList.remove('hidden');
+    const q = query.toLowerCase().trim();
+    let matches = [];
+
+    // Search across all datasets
+    Object.keys(datasets).forEach(cat => {
+        datasets[cat].forEach((item, index) => {
+            if (item.title.toLowerCase().includes(q) || item.overview.toLowerCase().includes(q) || (item.figures && item.figures.toLowerCase().includes(q)) || (item.region && item.region.toLowerCase().includes(q))) {
+                matches.push({ ...item, categoryKey: cat, index });
+            }
+        });
+    });
+
+    if (matches.length === 0) {
+        dropdown.innerHTML = `<div class="p-4 text-xs text-gray-400 text-center">Nenhum marco encontrado para "${query}"</div>`;
+    } else {
+        dropdown.innerHTML = matches.map(m => `
+            <div onclick="selectSearchResult('${m.categoryKey}', ${m.index})" class="p-3 hover:bg-gold-500/20 border-b border-gray-800/80 cursor-pointer transition flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-gold-400 font-mono">${m.year}</span>
+                    <h5 class="text-xs font-bold text-white font-cinzel">${m.title}</h5>
+                    <span class="text-[10px] text-gray-400">${m.region}</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs text-gold-400"></i>
+            </div>
+        `).join('');
+    }
+    dropdown.classList.remove('hidden');
+}
+
+function clearSearch() {
+    document.getElementById('global-search-input').value = '';
+    document.getElementById('search-results-dropdown').classList.add('hidden');
+    document.getElementById('search-clear-btn').classList.add('hidden');
+}
+
+function selectSearchResult(catKey, index) {
+    selectCategory(catKey);
+    updateEpoch(index);
+    clearSearch();
+}
+
+function onSliderChange(val) {
+    pauseStory();
+    updateEpoch(parseInt(val, 10));
+}
+
+function toggleFavoritesDrawer() {
+    document.getElementById('favorites-drawer').classList.toggle('translate-x-full');
+}
+
+function toggleCurrentFavorite() {
+    const currentItem = filteredEpochs[currentEpochIndex];
+    if (!currentItem) return;
+
+    const existingIdx = favorites.findIndex(f => f.title === currentItem.title);
+    if (existingIdx >= 0) {
+        favorites.splice(existingIdx, 1);
+    } else {
+        favorites.push({
+            title: currentItem.title,
+            year: currentItem.year,
+            categoryKey: currentCategory,
+            index: currentEpochIndex
+        });
+    }
+
+    localStorage.setItem('ecclesia_favs', JSON.stringify(favorites));
+    updateFavoriteButtonState();
+    updateFavoritesUI();
+}
+
+function updateFavoriteButtonState() {
+    const currentItem = filteredEpochs[currentEpochIndex];
+    const icon = document.getElementById('fav-current-icon');
+    if (!currentItem || !icon) return;
+
+    const isFav = favorites.some(f => f.title === currentItem.title);
+    icon.className = isFav ? "fa-solid fa-bookmark text-gold-400" : "fa-regular fa-bookmark";
+}
+
+function updateFavoritesUI() {
+    const list = document.getElementById('favorites-list');
+    const badge = document.getElementById('fav-count-badge');
+    badge.innerText = favorites.length;
+    badge.classList.toggle('hidden', favorites.length === 0);
+
+    if (favorites.length === 0) {
+        list.innerHTML = `<p class="text-xs text-gray-500 italic">Nenhum item salvo no relicário.</p>`;
+        return;
+    }
+
+    list.innerHTML = favorites.map(f => `
+        <div onclick="selectSearchResult('${f.categoryKey}', ${f.index})" class="p-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-800 text-xs flex items-center justify-between cursor-pointer">
+            <div>
+                <span class="text-[10px] text-gold-400 font-mono">${f.year}</span>
+                <h6 class="font-bold text-white font-cinzel truncate">${f.title}</h6>
+            </div>
+            <i class="fa-solid fa-location-arrow text-gold-400"></i>
+        </div>
+    `).join('');
+}
+
+function buildModalChapters() {
+    const grid = document.getElementById('modal-chapters-grid');
+    grid.innerHTML = '';
+
+    filteredEpochs.forEach((epoch, idx) => {
+        const card = document.createElement('div');
+        card.id = `modal-card-${idx}`;
+        card.className = `p-3 rounded-2xl border transition cursor-pointer flex items-center space-x-3 ${
+            idx === currentEpochIndex ? 'bg-gold-500/20 border-gold-500/60' : 'bg-gray-900/60 border-gray-800 hover:border-gray-700'
+        }`;
+        card.onclick = () => {
+            pauseStory();
+            updateEpoch(idx);
+        };
+
+        card.innerHTML = `
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center font-cinzel font-bold text-xs ${
+                idx === currentEpochIndex ? 'bg-gold-500 text-gray-950 shadow-md' : 'bg-gray-800 text-gray-300'
+            }">${idx + 1}</div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-mono text-gold-400 font-semibold">${epoch.year}</span>
+                </div>
+                <h5 class="text-xs font-bold text-white truncate font-cinzel">${epoch.title}</h5>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function updateModalActiveCard() {
+    filteredEpochs.forEach((_, idx) => {
+        const card = document.getElementById(`modal-card-${idx}`);
+        if (!card) return;
+        if (idx === currentEpochIndex) {
+            card.className = "p-3 rounded-2xl border transition cursor-pointer flex items-center space-x-3 bg-gold-500/20 border-gold-500/60 shadow-lg";
+        } else {
+            card.className = "p-3 rounded-2xl border transition cursor-pointer flex items-center space-x-3 bg-gray-900/60 border-gray-800 hover:border-gray-700";
+        }
+    });
+}
+
+function switchModalTab(tabKey) {
+    ['overview', 'theology', 'scripture', 'art'].forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const content = document.getElementById(`tab-content-${t}`);
+        if (t === tabKey) {
+            btn.className = "pb-2.5 px-3 border-b-2 border-gold-400 text-gold-400 font-bold";
+            content.classList.remove('hidden');
+        } else {
+            btn.className = "pb-2.5 px-3 border-b-2 border-transparent text-gray-400 hover:text-white";
+            content.classList.add('hidden');
+        }
+    });
+}
+
+function openModal() { document.getElementById('encyclopedia-modal').classList.remove('hidden'); }
+function closeModal() { document.getElementById('encyclopedia-modal').classList.add('hidden'); }
+
+function modalNextEpoch() {
+    if (currentEpochIndex < filteredEpochs.length - 1) updateEpoch(currentEpochIndex + 1);
+    else updateEpoch(0);
+}
+
+function modalPreviousEpoch() {
+    if (currentEpochIndex > 0) updateEpoch(currentEpochIndex - 1);
+    else updateEpoch(filteredEpochs.length - 1);
+}
+
+function nextEpoch() {
+    if (currentEpochIndex < filteredEpochs.length - 1) updateEpoch(currentEpochIndex + 1);
+    else pauseStory();
+}
+
+function previousEpoch() {
+    if (currentEpochIndex > 0) updateEpoch(currentEpochIndex - 1);
+}
+
+function togglePlayPause() {
+    if (isPlaying) pauseStory();
+    else playStory();
+}
+
+function playStory() {
+    isPlaying = true;
+    document.getElementById('play-icon').className = "fa-solid fa-pause";
+    document.getElementById('play-text').innerText = translations[currentLang].pause;
+
+    if (currentEpochIndex >= filteredEpochs.length - 1) currentEpochIndex = -1;
+
+    playInterval = setInterval(() => {
+        if (currentEpochIndex < filteredEpochs.length - 1) nextEpoch();
+        else pauseStory();
+    }, 6500);
+}
+
+function pauseStory() {
+    isPlaying = false;
+    document.getElementById('play-icon').className = "fa-solid fa-play";
+    document.getElementById('play-text').innerText = translations[currentLang].play;
+    if (playInterval) { clearInterval(playInterval); playInterval = null; }
+}
+
+function resetMapView() { map.setView([30, 20], 3); }
+
+function focusCurrentPoint() {
+    const epoch = filteredEpochs[currentEpochIndex];
+    if (epoch && epoch.coords) map.flyTo(epoch.coords, epoch.zoom);
 }
 
 function toggleSidebar() {
-  sidebarOpen = !sidebarOpen;
-  const sidebar = document.getElementById('sidebar-drawer');
-  const icon = document.getElementById('floating-toggle-icon');
-
-  if (sidebarOpen) {
-    sidebar.classList.remove('-translate-x-full');
-    icon.setAttribute('data-lucide', 'chevron-left');
-  } else {
-    sidebar.classList.add('-translate-x-full');
-    icon.setAttribute('data-lucide', 'chevron-right');
-  }
-  lucide.createIcons();
-}
-
-function handleSidebarMouseLeave() {
-  // on mobile, don't auto-close on mouse leave since hover behavior is unreliable
-  if(window.innerWidth >= 1024) {
-    if(sidebarOpen) {
-      toggleSidebar();
+    sidebarVisible = !sidebarVisible;
+    const dock = document.getElementById('bottom-dock');
+    const icon = document.getElementById('sidebar-toggle-icon');
+    if (sidebarVisible) {
+        dock.style.opacity = '1'; dock.style.transform = 'translateY(0)'; dock.style.pointerEvents = 'auto';
+        icon.className = "fa-solid fa-sliders";
+    } else {
+        dock.style.opacity = '0'; dock.style.transform = 'translateY(20px)'; dock.style.pointerEvents = 'none';
+        icon.className = "fa-solid fa-eye-slash";
     }
-    if(document.getElementById('preview-stage').classList.contains('hidden') === false) resetToAmbient();
-  }
 }
 
-function filterSidebar(cat) {
-  document.querySelectorAll('.sidebar-filter-btn').forEach(btn => {
-    btn.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-xs', 'text-marian-900', 'dark:text-white');
-    btn.classList.add('text-slate-600', 'dark:text-slate-400');
-  });
-  const activeBtn = document.getElementById(`filter-${cat}`);
-  if(activeBtn) {
-    activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-    activeBtn.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-xs', 'text-marian-900', 'dark:text-white');
-  }
-  document.querySelectorAll('.sidebar-group').forEach(group => {
-    if(cat === 'todos' || group.getAttribute('data-group') === cat) group.style.display = 'block';
-    else group.style.display = 'none';
-  });
+function openQuizModal() {
+    if (quizQuestions.length === 0) return;
+    currentQuizIndex = 0;
+    quizScore = 0;
+    document.getElementById('quiz-modal').classList.remove('hidden');
+    renderQuizQuestion();
 }
 
-// Expose handlers to window to keep compatibility with HTML inline `onclick`
-window.resetToAmbient = resetToAmbient;
-window.enterPortal = enterPortal;
+function closeQuizModal() { document.getElementById('quiz-modal').classList.add('hidden'); }
+
+function renderQuizQuestion() {
+    const container = document.getElementById('quiz-content');
+    const q = quizQuestions[currentQuizIndex];
+    document.getElementById('quiz-score').innerText = `Pontuação: ${quizScore} / ${quizQuestions.length}`;
+    document.getElementById('quiz-next-btn').classList.add('hidden');
+
+    let html = `
+        <div class="space-y-2">
+            <span class="text-xs font-mono font-bold text-gold-400">Pergunta ${currentQuizIndex + 1} de ${quizQuestions.length}</span>
+            <h4 class="font-cinzel text-base font-bold text-white">${q.question}</h4>
+        </div>
+        <div class="space-y-2 pt-2">
+    `;
+    q.options.forEach((opt, idx) => {
+        html += `<button onclick="checkQuizAnswer(${idx})" id="quiz-opt-${idx}" class="w-full text-left p-3 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-800 text-xs sm:text-sm text-gray-200 transition font-medium">${opt}</button>`;
+    });
+    html += `</div><div id="quiz-explanation" class="hidden p-3 rounded-xl bg-gold-500/10 border border-gold-500/30 text-xs text-gold-200 mt-3"></div>`;
+    container.innerHTML = html;
+}
+
+function checkQuizAnswer(selectedIdx) {
+    const q = quizQuestions[currentQuizIndex];
+    const correctIdx = q.answer;
+
+    for (let i = 0; i < q.options.length; i++) {
+        const btn = document.getElementById(`quiz-opt-${i}`);
+        btn.disabled = true;
+        if (i === correctIdx) btn.className = "w-full text-left p-3 rounded-xl bg-emerald-600/30 border border-emerald-500 text-xs sm:text-sm text-white font-bold";
+        else if (i === selectedIdx) btn.className = "w-full text-left p-3 rounded-xl bg-rose-600/30 border border-rose-500 text-xs sm:text-sm text-white font-bold";
+    }
+
+    if (selectedIdx === correctIdx) quizScore++;
+    document.getElementById('quiz-score').innerText = `Pontuação: ${quizScore} / ${quizQuestions.length}`;
+
+    const expBox = document.getElementById('quiz-explanation');
+    expBox.innerHTML = `<strong>Explicação:</strong> ${q.explanation}`;
+    expBox.classList.remove('hidden');
+
+    if (currentQuizIndex < quizQuestions.length - 1) {
+        document.getElementById('quiz-next-btn').classList.remove('hidden');
+    } else {
+        const container = document.getElementById('quiz-content');
+        container.innerHTML += `<div class="p-4 rounded-2xl bg-gold-500/20 border border-gold-500/50 text-center space-y-2 mt-4"><h4 class="font-cinzel text-lg font-bold text-gold-400">Excelente! Quiz Concluído</h4><p class="text-xs text-gray-200">Você acertou ${quizScore} de ${quizQuestions.length} perguntas. Continue explorando a história sagrada!</p></div>`;
+    }
+}
+
+function nextQuizQuestion() {
+    currentQuizIndex++;
+    renderQuizQuestion();
+}
+
+function openFlashcardsModal() {
+    if (flashcards.length === 0) return;
+    currentFlashcardIdx = 0;
+    document.getElementById('flashcards-modal').classList.remove('hidden');
+    renderFlashcard();
+}
+
+function closeFlashcardsModal() { document.getElementById('flashcards-modal').classList.add('hidden'); }
+
+function renderFlashcard() {
+    const fc = flashcards[currentFlashcardIdx];
+    document.getElementById('fc-front-title').innerText = fc.frontTitle;
+    document.getElementById('fc-front-tag').innerText = fc.frontTag;
+    document.getElementById('fc-back-text').innerText = fc.backText;
+    document.getElementById('fc-back-ccc').innerText = fc.ccc;
+    document.getElementById('fc-counter').innerText = `${currentFlashcardIdx + 1} / ${flashcards.length}`;
+    document.querySelector('.flip-card').classList.remove('flipped');
+}
+
+function flipCard(cardEl) { cardEl.classList.toggle('flipped'); }
+function nextFlashcard() {
+    currentFlashcardIdx = (currentFlashcardIdx + 1) % flashcards.length;
+    renderFlashcard();
+}
+function prevFlashcard() {
+    currentFlashcardIdx = (currentFlashcardIdx - 1 + flashcards.length) % flashcards.length;
+    renderFlashcard();
+}
+
+function exportCurrentStudyNote() {
+    const epoch = filteredEpochs[currentEpochIndex];
+    if (!epoch) return;
+
+    const text = `
+==================================================
+ALVORECER CATÓLICO — FICHA DE ESTUDO CATEQUÉTICO
+Criado por Victor Ladislau Viana
+==================================================
+Título: ${epoch.title} (${epoch.year})
+Era: ${epoch.era} | Local: ${epoch.region}
+Referência do Catecismo: ${epoch.ccc || 'CIC § 767'}
+
+PANORAMA HISTÓRICO:
+${epoch.overview}
+
+TEOLOGIA & MAGISTÉRIO:
+${epoch.theology}
+
+CITAÇÃO SAGRADA:
+${epoch.quote || 'N/A'}
+
+FIGURAS CHAVE:
+${epoch.figures}
+==================================================
+Plataforma de Ensino Católico — Alvorecer Católico
+Desenvolvido por Victor Ladislau Viana
+    `.trim();
+
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Estudo_${epoch.title.replace(/\s+/g, '_')}.txt`;
+    a.click();
+}
+
+function toggleAudio() {
+    const icon = document.getElementById('audio-icon');
+    const btn = document.getElementById('audio-btn');
+
+    if (isAudioPlaying) {
+        if (audioCtx) audioCtx.close();
+        audioCtx = null;
+        isAudioPlaying = false;
+        icon.className = "fa-solid fa-volume-xmark";
+        btn.className = "w-10 h-10 sm:w-11 sm:h-11 rounded-2xl glass-panel hover:bg-gray-800 text-gold-400 flex items-center justify-center text-sm transition";
+    } else {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            isAudioPlaying = true;
+            icon.className = "fa-solid fa-volume-high text-gold-400";
+            btn.className = "w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gold-500/20 border border-gold-500/50 text-gold-400 flex items-center justify-center text-sm transition";
+            triggerSacredSoundTransition();
+        } catch(e) {
+            console.error("Audio API not supported", e);
+        }
+    }
+}
+
+function triggerSacredSoundTransition() {
+    if (!audioCtx || !isAudioPlaying) return;
+    const now = audioCtx.currentTime;
+
+    const freqs = [146.83, 220.00, 293.66, 440.00];
+    freqs.forEach((f, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(0.04, now + 0.3 + (idx * 0.1));
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 4.5);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 4.8);
+    });
+}
+
+function changeLanguage(lang) {
+    currentLang = lang;
+    document.getElementById('welcome-lang-select').value = lang;
+    const t = translations[lang];
+    if (!t) return;
+
+    document.getElementById('txt-welcome-sub').innerText = t.welcomeSub;
+    document.getElementById('ui-menu-btn').innerText = t.menuBtn;
+    document.getElementById('ui-quiz-btn').innerText = t.quizBtn;
+    document.getElementById('ui-codice-btn').innerText = t.codiceBtn;
+    const filterTitle = document.getElementById('ui-filter-title');
+    if (filterTitle) filterTitle.innerText = t.filterTitle;
+    document.getElementById('ui-btn-prev').innerText = t.btnPrev;
+    document.getElementById('ui-btn-next').innerText = t.btnNext;
+    document.getElementById('play-text').innerText = isPlaying ? t.pause : t.play;
+    document.getElementById('lbl-theology').innerText = t.theology;
+    document.getElementById('lbl-art-gallery').innerText = t.artGallery;
+    document.getElementById('lbl-prev-chap').innerText = t.prevChap;
+    document.getElementById('lbl-next-chap').innerText = t.nextChap;
+}
+
+window.onload = async () => {
+    await loadData();
+    // Start with the welcome portal open, wait for user selection
+    document.getElementById('welcome-portal').classList.remove('hidden');
+};
+
+// Global bindings for inline HTML handlers
+window.selectCategory = selectCategory;
+window.openWelcomeMenu = openWelcomeMenu;
+window.handleGlobalSearch = handleGlobalSearch;
+window.clearSearch = clearSearch;
+window.selectSearchResult = selectSearchResult;
+window.toggleMapStyleMenu = toggleMapStyleMenu;
+window.setMapStyle = setMapStyle;
+window.openQuizModal = openQuizModal;
+window.openFlashcardsModal = openFlashcardsModal;
 window.toggleAudio = toggleAudio;
 window.openModal = openModal;
-window.toggleDarkMode = toggleDarkMode;
+window.resetMapView = resetMapView;
+window.focusCurrentPoint = focusCurrentPoint;
+window.toggleFavoritesDrawer = toggleFavoritesDrawer;
 window.toggleSidebar = toggleSidebar;
-window.handleSidebarMouseLeave = handleSidebarMouseLeave;
-window.loadTimelineStage = () => loadTimelineStage(hideAllStages);
-window.selectTimelineEra = selectTimelineEra;
-import { handleTimelineSliderChange, toggleTimelinePlay, timelineNextEra, timelinePrevEra, setTimelineSpeed, toggleCinematicMode, toggleMapLayer } from './modos/linha-do-tempo/timeline.js';
-window.handleTimelineSliderChange = handleTimelineSliderChange;
-window.toggleTimelinePlay = toggleTimelinePlay;
-window.timelineNextEra = timelineNextEra;
-window.timelinePrevEra = timelinePrevEra;
-window.setTimelineSpeed = setTimelineSpeed;
-window.toggleCinematicMode = toggleCinematicMode;
-window.toggleMapLayer = toggleMapLayer;
-window.filterSidebar = filterSidebar;
-window.previewSidebarItem = previewSidebarItem;
-window.loadFullContent = loadFullContent;
-window.openBook = openBook;
-window.flyToItemGlobe = flyToItemGlobe;
+window.onSliderChange = onSliderChange;
+window.previousEpoch = previousEpoch;
+window.togglePlayPause = togglePlayPause;
+window.nextEpoch = nextEpoch;
+window.toggleCurrentFavorite = toggleCurrentFavorite;
+window.exportCurrentStudyNote = exportCurrentStudyNote;
 window.closeModal = closeModal;
-window.handleSearch = handleSearch;
-window.findNearbyChurches = findNearbyChurches;
-window.openSidebarLevel2 = openSidebarLevel2;
-window.backToLevel1 = backToLevel1;
-window.handleLevel2Search = handleLevel2Search;
-
-window.onload = init;
+window.switchModalTab = switchModalTab;
+window.modalPreviousEpoch = modalPreviousEpoch;
+window.modalNextEpoch = modalNextEpoch;
+window.closeQuizModal = closeQuizModal;
+window.checkQuizAnswer = checkQuizAnswer;
+window.nextQuizQuestion = nextQuizQuestion;
+window.closeFlashcardsModal = closeFlashcardsModal;
+window.flipCard = flipCard;
+window.prevFlashcard = prevFlashcard;
+window.nextFlashcard = nextFlashcard;
+window.changeLanguage = changeLanguage;
