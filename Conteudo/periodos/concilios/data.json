@@ -1,44 +1,44 @@
 [
-  {
-    "id": 1,
-    "year": "451 d.C.",
-    "century": "antiga",
-    "title": "Concílio de Calcedônia",
-    "era": "Quarto Ecumênico",
-    "ccc": "CIC § 467",
-    "region": "Calcedônia (Istambul)",
-    "coords": [
-      40.99,
-      29.02
-    ],
-    "zoom": 6,
-    "overview": "Condenou o Monofisismo de Eutiques. Definiu as duas naturezas de Cristo, divina e humana, unidas sem confusão.",
-    "theology": "União Hipostática. Jesus Cristo é perfeito Deus e perfeito homem.",
-    "quote": "«Pedro falou pela boca de Leão!» — Aclamação dos Padres Conciliares",
-    "figures": "Papa São Leão Magno, Imperador Marciano.",
-    "artTitle": "Mosaicos Paleocristãos Bizantinos",
-    "artDesc": "Representação iconográfica do Tomo a Flaviano enviado pelo Papa Leão.",
-    "routes": []
-  },
-  {
-    "id": 2,
-    "year": "1869 - 1870 d.C.",
-    "century": "contemporanea",
-    "title": "I Concílio do Vaticano",
-    "era": "Vaticano I",
-    "ccc": "CIC § 891",
-    "region": "Vaticano, Roma",
-    "coords": [
-      41.9029,
-      12.4534
-    ],
-    "zoom": 6,
-    "overview": "Promulgado pelo Papa Beato Pio IX. Definiu o dogma da Infalibilidade Papal quando falando ex cathedra.",
-    "theology": "Dogma da Infalibilidade do Romano Pontífice em matérias de Fé e Moral e primado de jurisdição.",
-    "quote": "«O Bispo de Roma, quando fala ex cathedra, possui aquela infalibilidade de que o Divino Redentor quis dotar a sua Igreja.»",
-    "figures": "Beato Papa Pio IX, Cardeal Manning.",
-    "artTitle": "Sessão Solene no Palácio Apostólico",
-    "artDesc": "Pinturas do Século XIX retratando os Bispos reunidos com o Papa Pio IX.",
-    "routes": []
-  }
+    {
+        "id": 1,
+        "year": "451 d.C.",
+        "century": "antiga",
+        "title": "Concílio de Calcedônia",
+        "era": "Quarto Ecumênico",
+        "ccc": "CIC § 467",
+        "region": "Calcedônia (Istambul)",
+        "coords": [
+            40.99,
+            29.02
+        ],
+        "zoom": 6,
+        "overview": "Condenou o Monofisismo de Eutiques. Definiu as duas naturezas de Cristo, divina e humana, unidas sem confusão.",
+        "theology": "União Hipostática. Jesus Cristo é perfeito Deus e perfeito homem.",
+        "quote": "«Pedro falou pela boca de Leão!» — Aclamação dos Padres Conciliares",
+        "figures": "Papa São Leão Magno, Imperador Marciano.",
+        "artTitle": "Mosaicos Paleocristãos Bizantinos",
+        "artDesc": "Representação iconográfica do Tomo a Flaviano enviado pelo Papa Leão.",
+        "routes": []
+    },
+    {
+        "id": 2,
+        "year": "1869 - 1870 d.C.",
+        "century": "contemporanea",
+        "title": "I Concílio do Vaticano",
+        "era": "Vaticano I",
+        "ccc": "CIC § 891",
+        "region": "Vaticano, Roma",
+        "coords": [
+            41.9029,
+            12.4534
+        ],
+        "zoom": 6,
+        "overview": "Promulgado pelo Papa Beato Pio IX. Definiu o dogma da Infalibilidade Papal quando falando ex cathedra.",
+        "theology": "Dogma da Infalibilidade do Romano Pontífice em matérias de Fé e Moral e primado de jurisdição.",
+        "quote": "«O Bispo de Roma, quando fala ex cathedra, possui aquela infalibilidade de que o Divino Redentor quis dotar a sua Igreja.»",
+        "figures": "Beato Papa Pio IX, Cardeal Manning.",
+        "artTitle": "Sessão Solene no Palácio Apostólico",
+        "artDesc": "Pinturas do Século XIX retratando os Bispos reunidos com o Papa Pio IX.",
+        "routes": []
+    }
 ]

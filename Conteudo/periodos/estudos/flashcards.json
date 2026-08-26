@@ -1,26 +1,26 @@
 [
-  {
-    "frontTitle": "Pentecostes (33 d.C.)",
-    "frontTag": "Marco Fundamental",
-    "backText": "Descida do Espírito Santo sobre Maria e os Apóstolos no Cenáculo. Nascimento da Igreja Universal.",
-    "ccc": "CIC § 767"
-  },
-  {
-    "frontTitle": "Édito de Milão (313 d.C.)",
-    "frontTag": "Liberdade Religiosa",
-    "backText": "Decreto promulgado por Constantino que encerrou as perseguições imperiais aos cristãos.",
-    "ccc": "CIC § 2104"
-  },
-  {
-    "frontTitle": "Concílio de Trento (1545 d.C.)",
-    "frontTag": "Contrarreforma Dogmática",
-    "backText": "Reafirmou a Transubstanciação Eucarística, os 7 Sacramentos, a Vulgata Sagrada e os Seminários.",
-    "ccc": "CIC § 1376"
-  },
-  {
-    "frontTitle": "Milagre de Lanciano (750 d.C.)",
-    "frontTag": "Milagre Eucarístico",
-    "backText": "Hóstia transformada em tecido Miocárdico humano incorrupto e vinho em Sangue AB.",
-    "ccc": "CIC § 1374"
-  }
+    {
+        "frontTitle": "Pentecostes (33 d.C.)",
+        "frontTag": "Marco Fundamental",
+        "backText": "Descida do Espírito Santo sobre Maria e os Apóstolos no Cenáculo. Nascimento da Igreja Universal.",
+        "ccc": "CIC § 767"
+    },
+    {
+        "frontTitle": "Édito de Milão (313 d.C.)",
+        "frontTag": "Liberdade Religiosa",
+        "backText": "Decreto promulgado por Constantino que encerrou as perseguições imperiais aos cristãos.",
+        "ccc": "CIC § 2104"
+    },
+    {
+        "frontTitle": "Concílio de Trento (1545 d.C.)",
+        "frontTag": "Contrarreforma Dogmática",
+        "backText": "Reafirmou a Transubstanciação Eucarística, os 7 Sacramentos, a Vulgata Sagrada e os Seminários.",
+        "ccc": "CIC § 1376"
+    },
+    {
+        "frontTitle": "Milagre de Lanciano (750 d.C.)",
+        "frontTag": "Milagre Eucarístico",
+        "backText": "Hóstia transformada em tecido Miocárdico humano incorrupto e vinho em Sangue AB.",
+        "ccc": "CIC § 1374"
+    }
 ]
